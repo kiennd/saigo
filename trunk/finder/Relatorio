@@ -1,0 +1,41 @@
+Relatorio de Progresso de TG 4
+Laerte Alves de Almeida Junior
+
+Tarefas
+
+1)Implementar Prototipo para deteccao de Regioes de Texto em Imagem
+2)Encontrar Artigos que Utilizem tecnicas de Distribuicao Espacial e Componentes Conexas
+
+	Como jah estava na hora de produzir alguma implementacao resolvi dedicar essa semana ao maximo
+para conseguir produzir no prazo ( 1 semana ) uma boa implementacao da deteccao de regioes de texto.
+Utilizei na implementacao a abordagem que vc sugerido de Distrubuicao Espacial e Variacao entre Pixels.
+Dado que jah possuia uma boa quantidade de codigo jah implementado para tratamentos mais simples de Imagem
+me poupou um bocado de tempo. Para solucao do problema, adicionei 2 modulos aos que jah possuia:
+	
+	- Um para encontrar Faixas de Pixels que possuem boa variacao de pixels
+	- Outro Refina as Faixas de Pixels encontradas e agrupa-as em "Bounding Boxes", que compoem uma inteira regiao
+	definida como regiao de Texto.
+
+	Mesmo sendo um prototipo simples, foi conseguido abordar um boa quantidade de casos, sendo que nos casos simples,
+a maioria das regioes de texto sao encontradas, sendo que foi testado alem , com imagens com fundos mais complexos (screenshots) e Tabelas, e os resultados foram satisfatorio (alguns falsos-alarmes foram obtidos, isto é, regioes que nao sao texto, serem detectadas como texto, nesses testes). Ainda nao utilizei a ideia da analise de histogramas na implementacao, mas acredito
+que possa ser bastante util, para eliminacao dos falsos-alarmes.
+
+	Inclui dentro da pasta do programa, um arquivo zip (images.zip), que contem algumas boas imagens, e que cobriram os casos que me vieram a mente.
+
+	Tenho como proximo objetivo na implementacao, se vc achar adequado, focar na analise metrica dos resultados, para um melhor entendimento e aumentar a robustez da ideia com adicao da jah citada analise de histogramas, e ideia utilizadas nos artigos. 
+
+OBS: Instrucoes de Compilacao e uso do Programa estao inclusas no README e no help do programa (opcao -h).
+
+2) 
+	Como nessa semana a dedicacao foi total na geracao do prototipo nao me foquei muito na procura dos artigos, a qual pretendo me dedicar mas nessa proxima semana, porem ainda assim, no IEEE explore, dei uma olhada nos 2 artigos que lhe chamaram a atencao na ultima reuniao.
+
+- A New Approach for Video Text Detection
+- A Robust Algorithm for Text Detection in Color Images
+
+Pelo que vi, as tecnicas citadas e comentadas podem vir a ajudar a aumentar
+a robustez da implementacao.
+
+No IEEE explore, procurando por text detection , realmente tem artigos excelentes,que
+abordam exatamente o que estamos buscando (detecao por CC e Dist. Espacial), porem com ja
+comentei, a busca pelos artigos  tera um melhor enfoque durante essa semana.
+

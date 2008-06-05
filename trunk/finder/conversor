@@ -1,0 +1,5 @@
+#!/bin/bash
+for i in `ls $1`  
+do  
+  convert $1/$i `echo $2/$i | cut -d. -f1`.ppm
+done

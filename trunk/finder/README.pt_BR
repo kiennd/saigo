@@ -1,0 +1,14 @@
+Para gerar o executavel compconexo digite:
+
+$ make
+
+As opcoes disponiveis para compconexo sao  explicadas digitando:
+
+$ ./finder -h
+
+As imagens utilizadas nos testes estao incluidas no subdiretorio img.
+
+Para poder remover todos os arquivos que foram gerados na compilacao e
+imagens temporarias digite:
+
+$ make fullclean
