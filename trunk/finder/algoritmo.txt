@@ -1,0 +1,34 @@
+
+funcao encontre_intervalos () {
+para cada linha de imagem_altura {
+  intervalo.esquerda = 1;
+  enquanto (intervalo.esquerda < imagem.largura) {
+    intervalo.esquerda = encontre_primeiro_pixel_discrepante_linha_atual();
+    se intervalo.esquerda < imagem.largura {
+      intervalo.direita = encontre_ultimo_pixel_intervalo;
+      se (intervalo.direita - intervalo.esquerda > 10)
+        intervalos.Insere(intervalo);
+      intervalo.esquerda = intervalo.direita + 2;
+    }
+  }
+}
+}
+
+funcao encontre_ultimo_pixel_intervalo () {
+  repita {
+    se eh_similar(pixel_y,pixel_y-1)
+      pixels_iguais++;
+    senao {
+      pixels_iguais = 0;
+    se (intervalo_interessa)
+      ultimo_pixel = pixel_y - 1;
+    se eh_similar(primeiro_pixel_intervalo, pixel_y)
+      intervalo_interessa = SIM;
+    senao
+      se intervalo_interessa
+      intervalo_interessa = NÃO;    
+    }
+    pixel_y = pixel_y + 1;
+  } enquanto(pixel_y < imagem.largura E pixels_iguais < constante_variancia);
+  retorne ultimo_pixel;
+}
