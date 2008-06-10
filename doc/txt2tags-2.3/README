@@ -1,0 +1,113 @@
+txt2tags README file
+Tue Jun 14 23:12:05 2005
+
+
+  DESCRIPTION
+  ===========
+
+Txt2tags is a GPL format conversion tool written in Python that
+generates HTML, XHTML, SGML, LaTeX, Man Page, MoinMoin, Magic Point
+and PageMaker documents from a text file with little marks.
+
+Different from other conversion tools, it is generic, and not
+target-specific (as a txt2html tool). This way, you can keep just
+one source text file and one tool for all your formatting needs.
+
+It's a plain Python script, so no other external commands or
+libraries are needed.
+
+Supports header, title, bold/italic/underline/monospaced, verbatim,
+quote, link, lists, bar, image, table and more.
+
+With txt2tags, you focuses your mind on the document CONTENT, and
+forget about formatting. Just let the program do this dirty job.
+
+------------------------------------------------------------------------
+
+
+  QUICK SAMPLE
+  ============
+
+1. You write this sample txt2tags file:
+
+
+  ------------------------------------------------------------
+  
+  = Why =
+  
+  You **must** use [txt2tags http://txt2tags.sf.net] if you...
+  
+    - Need to convert documents to //various// formats
+    - Hate to write down ``<tags>`` for every formatting
+    - Want to be happy!
+    - [happyface.jpg]
+  
+  ------------------------------------------------------------
+
+
+2. You run this command:
+
+
+  txt2tags --target html --no-headers file.t2t
+
+
+3. You've got this:
+
+
+  ------------------------------------------------------------
+  
+  <H1>Why</H1>
+  <P>
+  You <B>must</B> use <A HREF="http://txt2tags.sf.net">txt2tags</A> if you...
+  </P>
+    <UL>
+    <LI>Need to convert documents to <I>various</I> formats
+    <LI>Hate to write down <CODE>&lt;tags&gt;</CODE> for every formatting
+    <LI>Want to be happy!
+    <LI><IMG ALIGN="middle" SRC="happyface.jpg" BORDER="0" ALT="">
+    </UL>
+  
+  ------------------------------------------------------------
+
+
+------------------------------------------------------------------------
+
+
+  INFORMATION
+  ===========
+
+For download, installation, samples, examples, tips, interfaces and
+tools information, please read the "Txt2tags User Guide".
+
+News and more information can be found on the program homepage:
+http://txt2tags.sf.net
+
+Txt2tags package structure:
+
+
+  ChangeLog             What have changed from previous versions
+  COPYING               The GPL License contents
+  README                This file
+  TEAM                  The txt2tags Team members
+  TODO                  Things to do in future versions
+  t2tconv               Converts .t2t files from v1.7 to v2.x format
+  txt2tags              The program itself (the only required file to run)
+  doc/markup.html       Txt2tags markup demo
+  doc/userguide.pdf     The Txt2tags User Guide
+  doc/*/                Translations of the documentation
+  extras/               Syntax files and utilities
+  po/                   Program translation files
+  samples/              Sample files and its converted documents
+  samples/img           "Powered by" button and other images
+  samples/css           Sample CSS files for HTML and XHTML
+  test/                 The txt2tags test suite
+
+
+------------------------------------------------------------------------
+
+        Author: Aurelio Marinho Jargas - http://aurelio.net
+
+
+
+
+

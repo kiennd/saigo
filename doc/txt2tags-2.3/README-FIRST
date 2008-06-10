@@ -1,0 +1,17 @@
+txt2tags README-FIRST file
+
+
+                         +---------------+
+                         |               |
+                         |   ATTENTION   |
+                         |               |
+                         +---------------+
+
+
+If you are a txt2tags user upgrading from a previous 1.x version,
+please read the "Upgrade Guide"[1], as major changes were made
+on the program and the compatibility was broken. Your existing
+.t2t files may not work!
+
+   [1] Upgrade Guide - http://txt2tags.sf.net/v2-upgrade.html
+
