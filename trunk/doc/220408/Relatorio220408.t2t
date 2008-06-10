@@ -3,8 +3,8 @@ Laerte Alves de Almeida Junior GRR20042353 @nl Rafael Charan GRR20053297
 %%date(%d/%m/%Y)
 
 %!postproc(html): '<IMG' '<IMG WIDTH=30% HEIGHT=45%'
-%!postproc(tex): 'includegraphics([\w}{.]+)@(\d)x(\d)' 'includegraphics[width=\2cm,height=\3cm]\1'
-%!postproc(tex): 'includegraphics([\w}{.]+)@' 'includegraphics[width=7cm,height=5cm]\1'
+%!postproc(tex): 'includegraphics([a-zA-Z0-9/}{.]+)@(\d)x(\d)' 'includegraphics[width=\2cm,height=\3cm]\1'
+%!postproc(tex): 'includegraphics([a-zA-Z0-9/}{.]+)@' 'includegraphics[width=7cm,height=5cm]\1'
 %!postproc(html): @nl "<br>"
 %!postproc(tex): @nl '\\\\'
 %!postproc(tex): @np '\\newpage'
@@ -52,10 +52,14 @@ Quando a união dos intervalos prosseguir para as linhas abaixo, será encontrad
 
 ==Resultados==
 
-Dessa maneira, ao término do algoritmo, estaremos de posse das regiões onde possivelmente há texto, delimitadas pelos retângulos construídos anteriormente.
+Dessa maneira, ao término do algoritmo, estaremos de posse das regiões onde possivelmente há texto, delimitadas pelos retângulos construídos anteriormente. 
+
+Seguem abaixo duas imagens resultantes da aplicação do nosso programa com os parametros //homogeneidade:5,similaridade:10 e distancia vertical:5//.
 
 %COLOCAR IMAGEM CAGADA
+[imagensRelatorio22042008/jinnaiConstanteIncorretaWindowsv5l10s15.jpg]@
 
+[imagensRelatorio22042008/resultadoWindowsInicialv5l10s15.jpg]@
 
 =Refinamento do algoritmo de localização de intervalos=
 
@@ -105,6 +109,13 @@ Não só as imagens aninhadas à texto, mas também as regiões que contém muit
  Já a constante de tamanho mínimo de regiões válidas (no momento, definida diretamente no código), possivelmente também possui alguma relação com a de homogeneidade, no sentido de que devemos desprezar apenas as variações que são pequenas demais para serem algum tipo de fonte, mas não as fontes pequenas em relação a maior presente na imagem. Ou seja, temos idéia de que essa análise deve levar em conta a localidade desse intervalo e os demais que foram encontrados na sua proximidades.
  
 % contrastar a imagem obtida do Windows  com suas constantes e a jinnai
+
+Segue abaixo as imagens resultantes após as nossas melhorias, sendo a primeira imagem com a constante de //homogeneidade:12// e a outra com //homogeneidade:5//. Os demais valores de constantes para ambas imagens seguem os mesmos.
+
+[imagensRelatorio22042008/jinnaiConstanteCorretav12l10s15.jpg]@
+
+[imagensRelatorio22042008/resultadoWindowsAposMelhoriav5l10s15.jpg]@
+
 
 =Conclusão=
 

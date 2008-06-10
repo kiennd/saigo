@@ -1,0 +1,57 @@
+Txt2tags PO and POT files
+-------------------------
+
+These are the txt2tags program i18n files, which allows it
+to be translated to other languages besides english.
+
+txt2tags.pot
+	The main translation file, with all the messages
+	needed to be translated
+	
+*.po
+	The translated messages for some languages
+
+-----------------------------------------------------------
+
+To translate txt2tags to your language:
+
+1. Search which is the ID for your language. For example,
+   "es" is for spanish, "de" is for german.
+
+2. Copy the "txt2tags.pot" file as "<ID>.po".
+
+3. Fill the "<ID>.po" file headers with your data.
+
+4. Fill all the "msgstr" lines with the translations.
+
+5. Use the "msgfmt -c --statistics <ID>.po" command to check
+   the file syntax.
+
+6. Follow the next steps to compile and install the
+   messages on your system and test them.
+
+7. Send the .po file to the txt2tags author, so it can be
+   officially included on the program distribution and you
+   will be part of the txt2tags team.
+
+-----------------------------------------------------------
+
+To install the translation file in your system (Linux):
+
+   Note: I have no idea on how to do it on Windows.
+
+1. Search where is the locale directory. For most systems
+   it is "/usr/share/locale/".
+
+2. Compile the .po into a .mo file with the following
+   command: "msgfmt -o txt2tags.mo <ID>.po"
+
+3. Move the .mo file to the locale directory, under the
+   "<ID>/LC_MESSAGES/" directory, for example:
+   "mv txt2tags.mo /usr/share/locale/pt_BR/LC_MESSAGES/"
+
+4. Make sure your system is configured to the same language
+   of your translation. Hint: "/etc/sysconfig/i18n"
+
+5. Run txt2tags and check if it worked!
+

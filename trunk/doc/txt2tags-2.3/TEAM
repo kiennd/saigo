@@ -1,0 +1,81 @@
+txt2tags TEAM
+-------------
+
+Programming, docs, testing, *       Aurelio Marinho Jargas
+Windows installer and tests         Guaracy Monteiro
+Handheld (PDA) installer and tests  Anamim Thuler Schuwarte
+
+Documentation english revision      Anamim Thuler Schuwarte
+Man page writer                     Jose Inacio Coelho da Silva (jic)
+Reference Card writer (pt_BR)       Jose Inacio Coelho da Silva (jic)
+FAQ writer (pt_BR)                  Wilson Freitas
+
+User Guide translation (pt_BR)      Jose Inacio Coelho da Silva (jic)
+Man page translation   (pt_BR)      Mauricio Teixeira (netmask)
+Sample file translation   (es)      Luis Cortazar
+Sample file translation   (fr)      Claude Hiebel
+Markup Demo translation   (fr)      Claude Hiebel
+Man page translation      (fr)      Claude Hiebel
+Writing Books translation (fr)      Claude Hiebel
+User Guide translation    (fr)      Claude Hiebel
+Sample file translation   (hu)      Adam Schmideg
+Sample file translation   (zh)      Zoom Quiet
+Markup Demo translation   (zh)      Zoom Quiet
+
+French translation                  Claude Hiebel
+German translation                  Manfred Schreiweis (manne)
+Hungarian translation               Tamas Ivan
+Italian translation                 Stefano Spinucci
+Spanish translation                 Ielton Ferreira Carneiro Pinto
+
+LaTeX consulting                    Leslie Harlley Watter
+XHTML consulting                    Ielton Ferreira Carneiro Pinto
+CSS consulting                      Osvaldo Santana Neto
+
+Emacs Editor syntax file            Leslie Harlley Watter
+Kate Editor syntax file             Juliano Dorneles dos Santos
+Vim Editor compiler                 Wilson Freitas
+gVim menu                           Otavio Correa Cordeiro
+
+CSS sample files                    Osvaldo Santana Neto
+Ruby batch script (t2tmake.rb)      Guaracy Monteiro
+txt2tags powered button             Fabianne Balvedi
+txt2tags blog-like button           Otavio Correa Cordeiro
+
+Debian package                      Christian Surchi
+Slackware package                   Jose Avila
+OpenBSD port                        Gleydson Soares
+FreeBSD port                        FreeBSD Team
+Gentoo package                      Gentoo Team
+
+IRC channel #txt2tags @ Freenode    Ielton Ferreira Carneiro Pinto
+Txt2tags Orkut community            Ielton Ferreira Carneiro Pinto
+Marketing                           Rubens Queiroz (Dicas-L), users
+
+
+Bug reports, nice ideas and support:
+
+  All the people at the program mailing lists, and specially:
+
+  Alexandre Lima, Cesar Gimenes, Christian Zuckschwerdt, Christof
+  Boeckler, Claude Hiebel, Elias Dorneles da Silveira Junior, Enderson
+  Maia, Grigory Bakunov, Guaracy Monteiro, Gustavo Niemeyer, Gustavo
+  Roberto Rodrigues Gonçalves, Hubert Chan, Hudson Reis, Ielton
+  Ferreira, Isis Binder, Jose Avila, Jose Inacio Coelho da Silva, Leo
+  Rosa, Leslie Harlley Watter, Lukasz Grabun, Mahesh T. Pai, Maksim
+  Ischenko, Manfred Schreiweis, Marcelo Subtil Marcal, Marcus Aurelius
+  Farias, Marcus Widerberg, Mark Stankus, Miek Gieben, Ola Samuelson,
+  Paul Hammant, Paulo R. Oliveira Junior, Peter Valach, Ramon
+  Felciano, Rahul Bhargava, Rodrigo Sobrinho, Rodrigo Stulzer, Rubens
+  Queiroz, Ruda Moura, Sandor Markon, Stefano Spinucci, Tamas Ivan,
+  Thobias Salazar Trevisan, Tristan Chabredier, Ulysses Almeida.
+
+
+Past Contributions:
+
+User Guide v1.6 translation (pt_BR)   Cesar A. K. Grossman
+Abuseme file translation (pt_BR)      Anamim Thuler Schuwarte
+Abuseme file translation (es)         Luis Cortazar
+Slackware package for v2.0            Tiago Machado (gar0t0)
+RPM package for v1.x                  Ielton Ferreira Carneiro Pinto
+
