@@ -80,6 +80,8 @@
 	 A primeira constante, não tão problemática até esse ponto, determina a diferença máxima aceitável entre dois pixels para que estes sejam considerados de cor semelhante. Ou seja, é o valor que o algoritmo utiliza, para diferenciar o possível texto do fundo da imagem. O problema é que dadas as diferentes imagens que o algoritmo pode analisar, não é interessante que a comparação seja baseada em um valor fixo, visto que as cores de fundo e texto podem variar, de maneira que alguma região de texto passe despercebida (seja considerada como uma região que faz parte do fundo).
 	 A segunda constante citada (homogeneidade) representa até o momento, o maior empecilho para o funcionamento genérico do algoritmo. Ou seja, até então, é necessário que essa constante seja configurada manualmente para cada imagem analisada, de maneira correta para que seja obtida a melhor seleção das regiões de texto. Isso porque, esse é o valor utilizado para determinar quais intervalos de pixels dentro da varredura de cada linha são variantes o suficiente para serem considerados como válidos (variancia é o parâmetro para a busca).
 	 Em outras palavras, essa constante está ligada diretamente ao tamanho da fonte contido na imagem analisada. Sendo assim, a dificuldade até então, é justamente determinar esse valor de maneira automática. Vale lembrar, que dado o funcionamento da busca (que procura regiões variantes em pixels, mas de cor homogênea), se a constate encontrada for compatível com a maior fonte do texto, as regiões com fontes pequenas ainda serão encontradas corretamente. A recíproca não é verdadeira, pois o algoritmo não encontra regiões com fontes grandes, se a constante estiver com um valor muito pequeno.
+	 
+	 - Cálculo dinâmico do limite de variância
 	 Para tentar solucionar este problema, foi investido algum tempo nas últimas reuniões da equipe, fazendo alguns cálculos de média de tamanho dos intervalos obtidos e também da mediana do tamanho dos intervalos obtidos.
 	 Ou seja, em um primeiro momento, a idéia foi começar com um valor fixo na constante, razoavelmente grande, que seria então estabilizado de acordo com as características da imagem, fazendo-se os cálculos acima citados, a cada novo intervalo válido encontrado. 
 	 No cálculo da média, o cálculo sempre tendeu a 1 (1 pixel de tamanho do intervalo), pois era muito influenciado por pequenas regiões encontradas muitas vezes na imagem. A mediana, da mesma maneira não ficou precisa, pois apesar de ter um valor maior, ainda não era suficiente para cobrir todos os casos.
@@ -89,7 +91,14 @@
 	 
 	//contrastar a imagem obtida do Windows  com suas constantes e a jinnai
 	
-	- Descrição formal do algoritmo
+- Solução para o "problema" das constantes: delimitação do escopo de trabalho
+
+	Após algumas reuniões com o orientador, foi definido pela equipe que o mais correto seria delimitar o escopo de trabalho do algoritmo. Com alguma pesquisa e leitura acerca do assunto (outros artigos e trabalhos já feitos) ficou claro que o problema da detecção automática dos mais variados tipos de texto, formas e tamanhos de fonte, é muito complexo de ser resolvido. Normalmente os outros trabalhos encontrados focam-se a solucionar apenas um tipo de problema, ou seja, um tipo de imagem a ser tratada, com suas determinadas características, modelo e tamanho de fonte.
+	Sendo assim, decidimos delimitar o escopo de trabalho do nosso algoritmo, para a detecção de textos artificiais, sobrepostos, em imagens captadas de sequencias de tv, como filmes, telejornais e outros programas com letras sobrepostas. Nada impede que o algoritmo em algum momento capte também texto natural da imagem, mas vale lembrar que este não será o foco principal.
+	Delimitando o escopo de detecção, torna-se mais simples encontrar uma combinação das constantes de variância de intervalos e similaridade de pixels, de maneira a otimizar o resultado das regiões encontradas, deixando-as com maior precisão e menos falsos alarmes.
+
+
+	- Descrição formal do algoritmo atual
 	
 	  //incluir imagem com o diagrama em blocos do algoritmo
 	  
