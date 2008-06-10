@@ -26,8 +26,6 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 		if ( img->issimilar(x,y-1,x,y,simpx) )
 			eq++;
 		else {
-
-
 			eq = 0;
 			//só pega o intervalo se as cores são similares com a de primy
 			if (pegaintervalo) {
@@ -38,11 +36,11 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 			if (img->issimilar(x,primy,x,y,simpx))
 			  pegaintervalo = true;
 			else {
-			if (pegaintervalo)			
-			  pegaintervalo = false;  
-			//else
-			//retorna se a nova cor é diferente da cor de primy e intervalo anterior não interessa 
-			  //return lastpx;
+				if (pegaintervalo)			
+				  pegaintervalo = false;  
+				//else
+				//retorna se a nova cor é diferente da cor de primy e intervalo anterior não interessa 
+				//return lastpx;
 			}
 		}
 		
