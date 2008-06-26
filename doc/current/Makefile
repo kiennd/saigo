@@ -5,7 +5,7 @@ relatorio.pdf: relatorio.tex imagens
 	pdflatex $<
 
 relatorio.tex: relatorio.t2t
-	../txt2tags -t tex -o relatorio.tex $<
+	../txt2tags-2.3/txt2tags -t tex -o relatorio.tex $<
 	
 .PHONY: clean distclean
 

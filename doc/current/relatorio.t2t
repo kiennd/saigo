@@ -16,6 +16,8 @@ Laerte Alves de Almeida Junior GRR20042353 @nl Rafael Charan GRR20053297
 %!postproc(tex): 'begin{verbatim}' 'begin{Verbatim}[fontsize=\small]'
 %!postproc(tex): 'end{verbatim}' 'end{Verbatim}'
 %!postproc(tex): 'amsfonts,graphicx' 'amsfonts,graphicx,fancyvrb'
+%!postproc(tex): '@BIB ([a-zA-Z0-9]+)' '\\bibliographystyle{plain}\n\\bibliography{\1}'
+%!postproc(tex): '@([a-zA-Z0-9]+)' '\\cite{\1}'
 %!encoding: utf-8
 
 
@@ -25,6 +27,7 @@ A indexação de imagens por conteúdo, refere-se à colocação de títulos em 
 O conteúdo //perceptível// é aquele definido pelos atributos da imagem, como cores, intensidade, forma, texturas, etc. Já o conteúdo semântico é definido pelos objetos, eventos e suas relações nas imagens/vídeos.
 
 O conteúdo //semântico// pode ser definido por texto, faces, veículos ou ações humanas, sendo o texto de grande importância. Isto porque, o texto presente na imagem é muito útil para descrever o seu conteúdo e mais que isso, pode ser facilmente caracterizado e extraído da imagem. Com base no texto ainda, podemos montar interessantes aplicações como buscas de imagens baseadas em palavras chaves, log automático de vídeos e indexação das imagens baseadas no texto.
+
 
 A nossa aplicação se enquadra neste escopo, de classificação das imagens pelo seu conteúdo semântico. No caso do nosso algoritmo, podemos dizer que estamos buscando uma "classe" do conteúdo semântico das imagens, já que procuramos texto para então classificar as imagens por esse conteúdo (texto).
 
@@ -268,3 +271,4 @@ De maneira simples, já conseguimos encontrar o nosso objeto de análise (regiõ
 
 Sendo assim, esperamos investir mais uma quantia de tempo na resolução desse problema no reconhecimento de imagens, para então seguirmos adiante na segmentação de vídeo propriamente dita e estruturas de armazenamento das informações coletadas.
 
+@BIB referencia

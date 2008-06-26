@@ -1,3 +1,0 @@
-#!/bin/bash
-
-~/data/bin/txt2tags-2.3/txt2tags $@
