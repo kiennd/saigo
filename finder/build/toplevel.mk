@@ -1,4 +1,4 @@
-all: $(PROGRAM)
+all: $(PROGRAM) $(EXTRA)
 
 $(PROGRAM) : $(MODULES)
 	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
