@@ -8,6 +8,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <cv.h>
+#include <highgui.h>
+
 using namespace std;
 
 int main ( int argc , char **argv )
@@ -59,6 +62,19 @@ int main ( int argc , char **argv )
 		input.draw_rect (it->top-1,it->left-1,it->bottom+1,it->right+1,color);
 	
 	input.save(output_file);
-	//system("display output_image.ppm");
+
+	// teste da opencv	
+	IplImage* img=cvLoadImage(output_file);
+	if(!img){
+    	printf("Could not load image file: %s\n",output_file);
+	    exit(0);
+	}
+
+	cvNamedWindow("nham", CV_WINDOW_AUTOSIZE); 
+    cvMoveWindow("nham", 100, 100);
+	cvShowImage("nham",img);
+	cvWaitKey(0);
+	cvReleaseImage(&img );
+	return 0;
 }
 
