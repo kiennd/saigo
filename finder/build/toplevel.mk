@@ -12,8 +12,8 @@ $(PROGRAM) : $(MODULES)
 clean: 
 	$(RM) $(TRASH)
 
-distclean: clean
-	$(RM) $(MODULES) $(PROGRAM)
+distclean: clean 
+	$(RM) $(MODULES) $(PROGRAM) $(EXTRA)
  
-fullclean: distclean 
+fullclean: distclean
 	for m in $(SUBDIRS) ; do make -C $$m distclean ; done	
