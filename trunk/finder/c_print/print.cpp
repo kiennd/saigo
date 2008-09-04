@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <unistd.h>
 using namespace std;
 
  #include <print.hpp>
@@ -26,7 +27,7 @@ void print::error ( string program_name , string error_str )
 
 	// Print help and finish
 	help(program_name);
-	exit(1);
+	_exit(1);
 }
 
 void print::percent ( int val , int total)
