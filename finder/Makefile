@@ -1,7 +1,7 @@
 DEPTH = .
 include $(DEPTH)/build/default.mk
 
-MODULES = main.a image.a bbox.a findvar.a print.a
+MODULES = main.a bbox.a findvar.a print.a imgAux.a
 PROGRAM = finder.bin
 EXTRA = finder
 

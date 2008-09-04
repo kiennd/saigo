@@ -1,7 +1,10 @@
 #ifndef __BBOX_HPP__
 
+#include <cv.h>
 #include <vector>
 #include <findvar.hpp>
+
+using namespace std;
 
 struct Rect {
 	int left,right,top,bottom;
@@ -11,7 +14,7 @@ struct Rect {
 
 
 namespace bbox {
-	vector<Rect>* get (Image*,vector<Range>*,int);
+	vector<Rect>* get (IplImage*,vector<Range>*,int);
 }; 
 
 #endif
