@@ -1,18 +1,18 @@
 
+#include <cv.h>
 #include <vector>
- #include <image.hpp>
-
+ #include <imgAux.hpp>
  #include <findvar.hpp>
 
-int findvar::firstpx_index (Image *img,int x,int y,int simpx)
+int findvar::firstpx_index (IplImage *img,int x,int y,int simpx)
 {
-	while ( y < img->get_width() && img->issimilar(x,y-1,x,y,simpx) )
+	while ( y < img->width && imgAux::issimilar(img,x,y-1,x,y,simpx) )
 		y++;
 
 	return y;
 }
 
-int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
+int findvar::lastpx_index (IplImage *img,int x,int y,int& delta,int simpx)
 {
 	int eq = 0,lastpx;
 	int region_count = 1;
@@ -23,7 +23,7 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 		// se tiver ponto perdido no ultimo pixel pode dar merda.
 
 		// Primeiro loop inicia lastpx
-		if ( img->issimilar(x,y-1,x,y,simpx) )
+		if ( imgAux::issimilar(img,x,y-1,x,y,simpx) )
 			eq++;
 		else {
 			eq = 0;
@@ -33,7 +33,7 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 				if (lastpx > y) 
 					delta = (delta*region_count + eq) / (++region_count);
 			}			
-			if (img->issimilar(x,primy,x,y,simpx))
+			if (imgAux::issimilar(img,x,primy,x,y,simpx))
 			  pegaintervalo = true;
 			else {
 				if (pegaintervalo)			
@@ -45,7 +45,7 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 		}
 		
 		y++;
-	} while ( y < img->get_width() && eq < delta );
+	} while ( y < img->width && eq < delta );
 
 	return lastpx;
 }
@@ -53,19 +53,19 @@ int findvar::lastpx_index (Image *img,int x,int y,int& delta,int simpx)
 #include <iostream>
 using namespace std;
 
-vector<Range>* findvar::get_ranges(Image *img,int delta_var,int simpx,int range_size)
+vector<Range>* findvar::get_ranges(IplImage *img,int delta_var,int simpx,int range_size)
 {
-	vector<Range>* ranges = new vector<Range>[img->get_height()];
+	vector<Range>* ranges = new vector<Range>[img->height];
 
 	int i;
 	Range r;
-	for (i = 0; i < img->get_height() ; i++) {
+	for (i = 0; i < img->height; i++) {
 		r.left = 1;
-		while (r.left < img->get_width()) {
+		while (r.left < img->width) {
 
 			r.left = firstpx_index (img,i,r.left,simpx);
 
-			if ( r.left < img->get_width() ) {
+			if ( r.left < img->width ) {
 				r.right = lastpx_index (img,i,r.left,delta_var,simpx);
 		
 				if ( r.right - r.left > range_size)	
@@ -75,7 +75,7 @@ vector<Range>* findvar::get_ranges(Image *img,int delta_var,int simpx,int range_
 				r.left = r.right + 2;
 			}
 		}
-		cout << delta_var << " " << endl;
+		//cout << delta_var << " " << endl;
 			
 	}
 	return ranges;

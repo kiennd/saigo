@@ -1,9 +1,10 @@
 
+#include <cv.h>
 #include <vector>
  #include <findvar.hpp>
  #include <bbox.hpp>
 
-vector<Rect>* bbox::get (Image*img,vector<Range>*ranges,int hpx)
+vector<Rect>* bbox::get (IplImage *img,vector<Range>*ranges,int hpx)
 {
 	int i,j,u;
 	vector<int> matched_rect;
@@ -12,9 +13,16 @@ vector<Rect>* bbox::get (Image*img,vector<Range>*ranges,int hpx)
 
 	closed = new vector<Rect>;
 
-	for ( i = 0 ; i < img->get_height(); i++ ) {
+	// Cada linha tem em ranges, os intervalos que contem texto encontrados
+	// ranges[0] : todos intervalos da linha 0
+	// ranges[1] : todos intervalos da linha 1, assim por diante
+	for ( i = 0 ; i < img->height; i++ ) {
 		for ( j = 0 ; j < ranges[i].size() ; j++ ) {
 		
+			// Verifica se o intervalo atual encaixa com algum retangulo que esta sendo construindo
+			// e armazena os retangulos que encaixaram
+			// 
+			// ...Na verdade armazena o indice do retangulo em open
 			matched_rect.clear();	
 			for ( u = 0 ; u < open.size() ; u++ ) {
 
@@ -24,12 +32,17 @@ vector<Rect>* bbox::get (Image*img,vector<Range>*ranges,int hpx)
 			}
 
 		
+			// Retangulo inicial criado para o intervalo
 			r.left = ranges[i][j].left;
 			r.right = ranges[i][j].right;
 			r.top = r.bottom = i;
 			r.count = hpx;
 			r.matched = 1;
 			
+			
+			// Todos os retangulos que casaram de alguma forma com o intervalo
+			// Vao modificar as dimensoes deste retangulo, depois serao jogados fora
+			// dando lugar a este novo retangulo.
 			int size = matched_rect.size();
 			for ( u = size-1 ; u >= 0 ; u-- ) {
 
@@ -49,6 +62,7 @@ vector<Rect>* bbox::get (Image*img,vector<Range>*ranges,int hpx)
 			open.push_back(r);	
 		}
 
+		// Zera o contador que o retangulo casou na ultima passada
 		for ( u = open.size()-1 ; u >= 0 ; u-- ) {
 			if ( ! open[u].matched ) {
 				open[u].count -= 1;

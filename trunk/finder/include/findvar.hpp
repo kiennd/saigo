@@ -1,16 +1,18 @@
 #ifndef __FINDVAR_HPP__
 
 #include <vector>
-#include <image.hpp>
+#include <imgAux.hpp>
+
+using namespace std;
 
 struct Range {
 	int left,right;
 };
 
 namespace findvar {
-	vector<Range>* get_ranges(Image*,int,int,int);
-	int firstpx_index (Image*,int,int,int);
-	int lastpx_index (Image*,int,int,int&,int);
+	int firstpx_index (IplImage*,int,int,int);
+	int lastpx_index (IplImage*,int,int,int&,int);
+	vector<Range>* get_ranges(IplImage*,int,int,int);
 };
 
 #endif
