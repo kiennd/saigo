@@ -5,5 +5,5 @@
 for i in `ls $1`
 do
   echo "Processando imagem: "$i
-  result=`./finder -v$3 -l$4 -s$5 -i $1/$i -o $2/$i`
+  result=`./finder -v$3 -l$4 -s$5 -r$6 -i $1/$i -o $2/$i`
 done

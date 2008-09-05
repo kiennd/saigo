@@ -67,7 +67,7 @@ void display (vector<IplImage*> *images) {
 int main ( int argc , char **argv )
 {	
 	char *inputF = NULL, *outputF = "output_image.ppm";
-	int v = 10,l = 2,s = 10,r = 25;
+	int v = 12,l = 5,s = 60,r = 10;
 
 	do {
 		char opt = getopt(argc,argv,"i:o:v:l:s:hr:");
