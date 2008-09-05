@@ -88,55 +88,16 @@ int main ( int argc , char **argv )
 				exit(0);
 		}
 	} while (1);
-		
 
-	// File Testing Section
-	//{
-	//	ifstream input_test (input_file);
-	//		
-	//	if ( ! input_test.is_open() ) 
-	//		print::error (argv[0],"Input not given or not exists.");
-	//}
-
+	if ( inputF != NULL ) {
+		execute(inputF,outputF,v,l,s,r);
 	
-	//DImage input(input_file);
-	//sample color[3] = {255,0,0};
-
-	/*
-	if (inputF == NULL)
-		print::error (argv[0],"Arquivo de entrada não fornecido.");
-		
+		vector<IplImage*> *images = new vector<IplImage*>[2];
+		images->push_back(cvLoadImage(inputF));
+		images->push_back(cvLoadImage(outputF));
 	
-	IplImage* input = cvLoadImage(inputF);
-	if (!input) {
-		print::error (argv[0],"Arquivo de entrada não existe.");
+		display(images);
 	}
-	string input_file = inputF,output_file = outputF;
-	
-
-	vector<Range> *r = findvar::get_ranges(input,deltavar,simpx,range_size);
-	vector<Rect> *rects = bbox::get(input,r,deltah);
-
-	cout << "Found " << rects->size() << " Text Regions." <<  endl;
-
-	vector<Rect>::iterator it;
-	for ( it = rects->begin() ; it != rects->end() ; it++ ) 
-		cvRectangle(input, cvPoint(it->left,it->top), cvPoint(it->right,it->bottom), cvScalar(0,0,255), 1);
-		//input.draw_rect (it->top-1,it->left-1,it->bottom+1,it->right+1,color);
-	
-	if(!cvSaveImage(output_file.c_str(),input)) 
-		print::error(argv[0],"Could not save: "+output_file+ ".");
-	*/
-
-	execute(inputF,outputF,v,l,s,r);
-	
-	vector<IplImage*> *images = new vector<IplImage*>[2];
-	images->push_back(cvLoadImage(inputF));
-	images->push_back(cvLoadImage(outputF));
-	
-	display(images);
-		
-	//cvReleaseImage(&input);
-	
+			
 	return 0;
 }
