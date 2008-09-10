@@ -12,6 +12,28 @@
 
 using namespace std;
 
+void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName) {
+	IplImage* imgTeste;
+	CvRect retInteresse;
+	char caminhoArquivo[255];
+	int i = 1;
+		vector<Rect>::iterator it;
+		for ( it = rects->begin() ; it != rects->end() ; it++ ) {
+		if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
+		retInteresse = cvRect(it->left,it->top,it->right-it->left,it->bottom-it->top);
+		imgTeste = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
+		cvSetImageROI( input, retInteresse );
+    cvCopy( input, imgTeste, NULL );
+    
+    sprintf(caminhoArquivo,"%sregion%d.jpg",outputFileName,i);
+    cvSaveImage(caminhoArquivo,imgTeste);
+    i++;
+    cvResetImageROI(input);
+    }
+    cout << "dimensoes ret: " << it->right - it->left << " " << it->bottom-it->top << "\n" ;
+  }
+
+}
 
 void execute (char *inputF,char *outputF,int v,int l,int s,int rs) {
 
@@ -24,10 +46,11 @@ void execute (char *inputF,char *outputF,int v,int l,int s,int rs) {
 	vector<Rect> *rects = bbox::get(input,r,l);
 
 	cout << "Encontrou " << rects->size() << " Regioes de Texto." <<  endl;
-	
+	salvaRegioes(input, rects, outputF);
 	vector<Rect>::iterator it;
-	for ( it = rects->begin() ; it != rects->end() ; it++ ) 
-		cvRectangle(input, cvPoint(it->left,it->top), cvPoint(it->right,it->bottom), cvScalar(0,0,255), 1);
+	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
+    cvRectangle(input, cvPoint(it->left,it->top), cvPoint(it->right,it->bottom), cvScalar(0,0,255), 1);
+  }
 
 	if(!cvSaveImage(outputF,input)) 
 		print::error("Erro:","Não foi possivel salvar em "+string(outputF)+ ".");
