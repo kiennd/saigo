@@ -30,12 +30,12 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName) {
     i++;
     cvResetImageROI(input);
     }
-    cout << "dimensoes ret: " << it->right - it->left << " " << it->bottom-it->top << "\n" ;
+    //cout << "dimensoes ret: " << it->right - it->left << " " << it->bottom-it->top << "\n" ;
   }
 
 }
 
-void execute (char *inputF,char *outputF,int v,int l,int s,int rs) {
+void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRetangulos) {
 
 	IplImage* input = cvLoadImage(inputF);
 	if (!input) {
@@ -46,7 +46,9 @@ void execute (char *inputF,char *outputF,int v,int l,int s,int rs) {
 	vector<Rect> *rects = bbox::get(input,r,l);
 
 	cout << "Encontrou " << rects->size() << " Regioes de Texto." <<  endl;
-	salvaRegioes(input, rects, outputF);
+  if (salvarRetangulos) {
+   	salvaRegioes(input, rects, outputF);
+  }
 	vector<Rect>::iterator it;
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
     cvRectangle(input, cvPoint(it->left,it->top), cvPoint(it->right,it->bottom), cvScalar(0,0,255), 1);
@@ -91,9 +93,9 @@ int main ( int argc , char **argv )
 {	
 	char *inputF = NULL, *outputF = "output_image.ppm";
 	int v = 12,l = 5,s = 60,r = 10;
-
+  bool salvarRetangulos = false;
 	do {
-		char opt = getopt(argc,argv,"i:o:v:l:s:hr:");
+		char opt = getopt(argc,argv,"i:o:v:l:s:hgr:");
 
 		if ( opt == -1 ) 
 			break;
@@ -105,6 +107,7 @@ int main ( int argc , char **argv )
 			case 'l': l = atoi(optarg); break;
 			case 's': s = atoi(optarg); break;
 			case 'r': r = atoi(optarg); break;
+			case 'g': salvarRetangulos = true; break;
 			case 'h':
 			default:
 				print::help(argv[0]);
@@ -113,7 +116,7 @@ int main ( int argc , char **argv )
 	} while (1);
 
 	if ( inputF != NULL ) {
-		execute(inputF,outputF,v,l,s,r);
+		execute(inputF,outputF,v,l,s,r, salvarRetangulos);
 	
 		vector<IplImage*> *images = new vector<IplImage*>[2];
 		images->push_back(cvLoadImage(inputF));

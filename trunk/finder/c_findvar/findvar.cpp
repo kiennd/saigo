@@ -12,7 +12,7 @@ int findvar::firstpx_index (IplImage *img,int x,int y,int simpx)
 	return y;
 }
 
-int findvar::lastpx_index (IplImage *img,int x,int y,int& delta,int simpx)
+int findvar::lastpx_index (IplImage *img,int x,int y,int& delta,int simpx, CvScalar* corInteresse)
 {
 	int eq = 0,lastpx;
 	int region_count = 1;
@@ -30,14 +30,11 @@ int findvar::lastpx_index (IplImage *img,int x,int y,int& delta,int simpx)
 			//só pega o intervalo se as cores são similares com a de primy
 			if (pegaintervalo) {
 			    lastpx = y-1;
-				if (lastpx > y) 
-					delta = (delta*region_count + eq) / (++region_count);
 			}			
 			if (imgAux::issimilar(img,x,primy,x,y,simpx))
 			  pegaintervalo = true;
 			else {
-				if (pegaintervalo)			
-				  pegaintervalo = false;  
+			  pegaintervalo = false;  
 				//else
 				//retorna se a nova cor é diferente da cor de primy e intervalo anterior não interessa 
 				//return lastpx;
@@ -46,7 +43,8 @@ int findvar::lastpx_index (IplImage *img,int x,int y,int& delta,int simpx)
 		
 		y++;
 	} while ( y < img->width && eq < delta );
-
+ 
+  *corInteresse = cvGet2D(img,x,primy);
 	return lastpx;
 }
 
@@ -59,18 +57,25 @@ vector<Range>* findvar::get_ranges(IplImage *img,int delta_var,int simpx,int ran
 
 	int i;
 	Range r;
+	CvScalar corInteresse;
 	for (i = 0; i < img->height; i++) {
+
+
 		r.left = 1;
 		while (r.left < img->width) {
 
 			r.left = firstpx_index (img,i,r.left,simpx);
 
 			if ( r.left < img->width ) {
-				r.right = lastpx_index (img,i,r.left,delta_var,simpx);
-		
-				if ( r.right - r.left > range_size)	
+				r.right = lastpx_index (img,i,r.left,delta_var,simpx, &corInteresse);
+		    r.corInteresse = corInteresse;
+		    
+				if ( r.right - r.left > range_size) {
 					ranges[i].push_back(r);
-
+					cout << "Linha " << i << ":\n\n";
+          cout << "B: " << corInteresse.val[0] << " G:" << corInteresse.val[1] << " R:" << corInteresse.val[2] << "\n"; 
+        
+        }
 				// Para comparar somente com pixels ainda nao vistos 
 				r.left = r.right + 2;
 			}
