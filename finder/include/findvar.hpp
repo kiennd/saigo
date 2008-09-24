@@ -13,7 +13,7 @@ struct Range {
 namespace findvar {
 	int firstpx_index (IplImage*,int,int,int);
 	int lastpx_index (IplImage*,int,int,int&,int, CvScalar*);
-	vector<Range>* get_ranges(IplImage*,int,int,int);
+	vector<Range>* get_ranges(IplImage*,int,int,int, CvScalar*);
 };
 
 #endif

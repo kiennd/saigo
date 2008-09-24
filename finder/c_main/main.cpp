@@ -12,26 +12,50 @@
 
 using namespace std;
 
-void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName) {
+void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, CvScalar mediaCorInteresse) {
 	IplImage* imgTeste;
 	CvRect retInteresse;
 	char caminhoArquivo[255];
 	int i = 1;
-		vector<Rect>::iterator it;
-		for ( it = rects->begin() ; it != rects->end() ; it++ ) {
-		if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
-		retInteresse = cvRect(it->left,it->top,it->right-it->left,it->bottom-it->top);
-		imgTeste = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
-		cvSetImageROI( input, retInteresse );
-    cvCopy( input, imgTeste, NULL );
-    
-    sprintf(caminhoArquivo,"%sregion%d.jpg",outputFileName,i);
-    cvSaveImage(caminhoArquivo,imgTeste);
-    i++;
-    cvResetImageROI(input);
-    }
+	CvScalar s;
+	vector<Rect>::iterator it;
+	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
+	  if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
+	    retInteresse = cvRect(it->left,it->top,it->right-it->left,it->bottom-it->top);
+	    imgTeste = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
+	    cvSetImageROI( input, retInteresse );
+            cvCopy( input, imgTeste, NULL );
+            
+	    int x,y,limiarBinarizacao;
+	    limiarBinarizacao = (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
+	    for (x=0;x<imgTeste->height;x++)
+	      for (y=0;y<imgTeste->width;y++) {
+	        s = cvGet2D(imgTeste,x,y);
+		if (s.val[0] > mediaCorInteresse.val[0])
+		  s.val[0] = 255;
+		else
+		  s.val[0] = 0;
+		if (s.val[1] > mediaCorInteresse.val[1])
+		  s.val[1] = 255;
+		else
+		  s.val[1] = 0;
+		if (s.val[2] > mediaCorInteresse.val[2])
+		  s.val[2] = 255;
+		else
+		  s.val[2] = 0;
+
+		cvSet2D(imgTeste,x,y,s);
+	        	
+		
+	      }
+
+            sprintf(caminhoArquivo,"%sregion%d.bmp",outputFileName,i);
+            cvSaveImage(caminhoArquivo,imgTeste);
+            i++;
+            cvResetImageROI(input);
+          }
     //cout << "dimensoes ret: " << it->right - it->left << " " << it->bottom-it->top << "\n" ;
-  }
+        }
 
 }
 
@@ -41,13 +65,13 @@ void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRe
 	if (!input) {
 		print::error ("Erro:","Arquivo de entrada não existe.");
 	}	
-
-	vector<Range> *r = findvar::get_ranges(input,v,s,rs);
+        CvScalar mediaCorInteresse;
+	vector<Range> *r = findvar::get_ranges(input,v,s,rs,&mediaCorInteresse);
 	vector<Rect> *rects = bbox::get(input,r,l);
 
 	cout << "Encontrou " << rects->size() << " Regioes de Texto." <<  endl;
   if (salvarRetangulos) {
-   	salvaRegioes(input, rects, outputF);
+   	salvaRegioes(input, rects, outputF, mediaCorInteresse);
   }
 	vector<Rect>::iterator it;
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
