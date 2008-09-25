@@ -27,22 +27,28 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
             cvCopy( input, imgTeste, NULL );
             
 	    int x,y,limiarBinarizacao;
-	    limiarBinarizacao = (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
+	    //limiarBinarizacao = (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
+	    limiarBinarizacao = mediaCorInteresse.val[0];
+	    if (mediaCorInteresse.val[1] > limiarBinarizacao)
+	      limiarBinarizacao = mediaCorInteresse.val[2];
+	    if (mediaCorInteresse.val[2] > limiarBinarizacao)
+	      limiarBinarizacao = mediaCorInteresse.val[3];
+	    
+	    
+	    
 	    for (x=0;x<imgTeste->height;x++)
 	      for (y=0;y<imgTeste->width;y++) {
 	        s = cvGet2D(imgTeste,x,y);
-		if (s.val[0] > mediaCorInteresse.val[0])
+		if ((s.val[0] > limiarBinarizacao) || (s.val[1] > limiarBinarizacao) || (s.val[2] > limiarBinarizacao)) {
 		  s.val[0] = 255;
-		else
-		  s.val[0] = 0;
-		if (s.val[1] > mediaCorInteresse.val[1])
 		  s.val[1] = 255;
-		else
-		  s.val[1] = 0;
-		if (s.val[2] > mediaCorInteresse.val[2])
 		  s.val[2] = 255;
-		else
+		}
+		else {
+		  s.val[0] = 0;
+		  s.val[1] = 0;
 		  s.val[2] = 0;
+		}	  
 
 		cvSet2D(imgTeste,x,y,s);
 	        	
