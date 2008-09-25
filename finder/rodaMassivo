@@ -2,8 +2,13 @@
 
 [ -d $2 ] || mkdir $2
 
+V=${3:-15}
+L=${4:-6}
+S=${5:-100}
+R=${6:-8}
+
 for i in `ls $1`
 do
   echo "Processando imagem: "$i
-  result=`./finder -v$3 -l$4 -s$5 -r$6 -i $1/$i -o $2/$i`
+  result=`./finder -v$V -l$L -s$S -r$R -i $1/$i -o $2/$i`
 done

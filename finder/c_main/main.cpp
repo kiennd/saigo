@@ -19,6 +19,13 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 	int i = 1;
 	CvScalar s;
 	vector<Rect>::iterator it;
+	char diretorio[255];
+	char comando[255];
+
+	sprintf(diretorio,"%s_dir",outputFileName);
+	sprintf(comando,"mkdir %s",diretorio);	
+
+	system(comando);
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
 	  if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
 	    retInteresse = cvRect(it->left,it->top,it->right-it->left,it->bottom-it->top);
@@ -28,11 +35,11 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
             
 	    int x,y,limiarBinarizacao;
 	    //limiarBinarizacao = (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
-	    limiarBinarizacao = mediaCorInteresse.val[0];
+	    limiarBinarizacao = (int) mediaCorInteresse.val[0];
 	    if (mediaCorInteresse.val[1] > limiarBinarizacao)
-	      limiarBinarizacao = mediaCorInteresse.val[2];
+	      limiarBinarizacao = (int) mediaCorInteresse.val[2];
 	    if (mediaCorInteresse.val[2] > limiarBinarizacao)
-	      limiarBinarizacao = mediaCorInteresse.val[3];
+	      limiarBinarizacao = (int) mediaCorInteresse.val[3];
 	    
 	    
 	    
@@ -55,7 +62,7 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 		
 	      }
 
-            sprintf(caminhoArquivo,"%sregion%d.bmp",outputFileName,i);
+			sprintf(caminhoArquivo,"%s/region%d.bmp",diretorio,i);
             cvSaveImage(caminhoArquivo,imgTeste);
             i++;
             cvResetImageROI(input);
@@ -123,9 +130,10 @@ int main ( int argc , char **argv )
 {	
 	char *inputF = NULL, *outputF = "output_image.ppm";
 	int v = 12,l = 5,s = 60,r = 10;
-  bool salvarRetangulos = false;
+	bool salvarRetangulos = false;
+	bool mostrarResultado = false;
 	do {
-		char opt = getopt(argc,argv,"i:o:v:l:s:hgr:");
+		char opt = getopt(argc,argv,"i:o:v:l:s:hgwr:");
 
 		if ( opt == -1 ) 
 			break;
@@ -138,6 +146,7 @@ int main ( int argc , char **argv )
 			case 's': s = atoi(optarg); break;
 			case 'r': r = atoi(optarg); break;
 			case 'g': salvarRetangulos = true; break;
+			case 'w': mostrarResultado = true; break;
 			case 'h':
 			default:
 				print::help(argv[0]);
@@ -152,7 +161,8 @@ int main ( int argc , char **argv )
 		images->push_back(cvLoadImage(inputF));
 		images->push_back(cvLoadImage(outputF));
 	
-		display(images);
+		if ( mostrarResultado )
+			display(images);
 	}
 			
 	return 0;
