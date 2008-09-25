@@ -31,6 +31,8 @@ int main(int argc, char** argv)
 
     getdir(dir,files);
 
+	system("mkdir diretorio");
+
     for (unsigned int i = 0;i < files.size();i++) {
         cout << files[i] << endl;
     }
