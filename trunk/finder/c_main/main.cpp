@@ -23,8 +23,15 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 	char comando[255];
 	sprintf(diretorio,"%s_dir",outputFileName);
 	sprintf(comando,"mkdir %s",diretorio);	
-
-	system(comando);
+	system(comando);	
+	int limiarBinarizacao;	
+	limiarBinarizacao = (int) mediaCorInteresse.val[0];
+	if (mediaCorInteresse.val[1] > limiarBinarizacao)
+	  limiarBinarizacao = (int) mediaCorInteresse.val[1];
+	if (mediaCorInteresse.val[2] > limiarBinarizacao)
+	  limiarBinarizacao = (int) mediaCorInteresse.val[2];	
+  cout << "Limiar binarização calculado: " << limiarBinarizacao << "\n";
+	  
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
 	  if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
 	    retInteresse = cvRect(it->left-b,it->top-b,(it->right-it->left)+b,(it->bottom-it->top)+b);
@@ -32,15 +39,8 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 	    cvSetImageROI( input, retInteresse );
             cvCopy( input, imgTeste, NULL );
             
-	    int x,y,limiarBinarizacao;
+	    int x,y;
 	    //limiarBinarizacao = (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
-	    limiarBinarizacao = (int) mediaCorInteresse.val[0];
-	    if (mediaCorInteresse.val[1] > limiarBinarizacao)
-	      limiarBinarizacao = (int) mediaCorInteresse.val[2];
-	    if (mediaCorInteresse.val[2] > limiarBinarizacao)
-	      limiarBinarizacao = (int) mediaCorInteresse.val[3];
-	    
-	    
 	    
 	    for (x=0;x<imgTeste->height;x++)
 	      for (y=0;y<imgTeste->width;y++) {
@@ -48,7 +48,11 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 		if ((s.val[0] > limiarBinarizacao) || (s.val[1] > limiarBinarizacao) || (s.val[2] > limiarBinarizacao)) {
 		  s.val[0] = 255;
 		  s.val[1] = 255;
-		  s.val[2] = 255;
+		  s.val[2] = 255;limiarBinarizacao = (int) mediaCorInteresse.val[0];
+	    if (mediaCorInteresse.val[1] > limiarBinarizacao)
+	      limiarBinarizacao = (int) mediaCorInteresse.val[2];
+	    if (mediaCorInteresse.val[2] > limiarBinarizacao)
+	      limiarBinarizacao = (int) mediaCorInteresse.val[3];
 		}
 		else {
 		  s.val[0] = 0;
@@ -68,7 +72,6 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
           }
     //cout << "dimensoes ret: " << it->right - it->left << " " << it->bottom-it->top << "\n" ;
         }
-
 }
 
 void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRetangulos, int b) {
