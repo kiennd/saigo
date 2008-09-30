@@ -48,11 +48,7 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 		if ((s.val[0] > limiarBinarizacao) || (s.val[1] > limiarBinarizacao) || (s.val[2] > limiarBinarizacao)) {
 		  s.val[0] = 255;
 		  s.val[1] = 255;
-		  s.val[2] = 255;limiarBinarizacao = (int) mediaCorInteresse.val[0];
-	    if (mediaCorInteresse.val[1] > limiarBinarizacao)
-	      limiarBinarizacao = (int) mediaCorInteresse.val[2];
-	    if (mediaCorInteresse.val[2] > limiarBinarizacao)
-	      limiarBinarizacao = (int) mediaCorInteresse.val[3];
+		  s.val[2] = 255;
 		}
 		else {
 		  s.val[0] = 0;
