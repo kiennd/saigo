@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, CvScalar mediaCorInteresse) {
+void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, CvScalar mediaCorInteresse, int b) {
 	IplImage* imgTeste;
 	CvRect retInteresse;
 	char caminhoArquivo[255];
@@ -21,14 +21,13 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 	vector<Rect>::iterator it;
 	char diretorio[255];
 	char comando[255];
-
 	sprintf(diretorio,"%s_dir",outputFileName);
 	sprintf(comando,"mkdir %s",diretorio);	
 
 	system(comando);
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
 	  if ((it->right - it->left > 0) && (it->bottom-it->top > 0)) {
-	    retInteresse = cvRect(it->left,it->top,it->right-it->left,it->bottom-it->top);
+	    retInteresse = cvRect(it->left-b,it->top-b,(it->right-it->left)+b,(it->bottom-it->top)+b);
 	    imgTeste = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
 	    cvSetImageROI( input, retInteresse );
             cvCopy( input, imgTeste, NULL );
@@ -72,7 +71,7 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 
 }
 
-void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRetangulos) {
+void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRetangulos, int b) {
 
 	IplImage* input = cvLoadImage(inputF);
 	if (!input) {
@@ -84,7 +83,7 @@ void execute (char *inputF,char *outputF,int v,int l,int s,int rs, bool salvarRe
 
 	cout << "Encontrou " << rects->size() << " Regioes de Texto." <<  endl;
   if (salvarRetangulos) {
-   	salvaRegioes(input, rects, outputF, mediaCorInteresse);
+   	salvaRegioes(input, rects, outputF, mediaCorInteresse, b);
   }
 	vector<Rect>::iterator it;
 	for ( it = rects->begin() ; it != rects->end() ; it++ ) {
@@ -129,11 +128,13 @@ void display (vector<IplImage*> *images) {
 int main ( int argc , char **argv )
 {	
 	char *inputF = NULL, *outputF = "output_image.ppm";
-	int v = 12,l = 5,s = 60,r = 10;
+	int v = 12,l = 5,s = 60,r = 10,b=0;
 	bool salvarRetangulos = false;
 	bool mostrarResultado = false;
 	do {
-		char opt = getopt(argc,argv,"i:o:v:l:s:hgwr:");
+
+		char opt = getopt(argc,argv,"i:o:v:l:s:hgwr:b:");
+
 
 		if ( opt == -1 ) 
 			break;
@@ -145,6 +146,7 @@ int main ( int argc , char **argv )
 			case 'l': l = atoi(optarg); break;
 			case 's': s = atoi(optarg); break;
 			case 'r': r = atoi(optarg); break;
+  		case 'b': b = atoi(optarg); break;
 			case 'g': salvarRetangulos = true; break;
 			case 'w': mostrarResultado = true; break;
 			case 'h':
@@ -155,7 +157,7 @@ int main ( int argc , char **argv )
 	} while (1);
 
 	if ( inputF != NULL ) {
-		execute(inputF,outputF,v,l,s,r, salvarRetangulos);
+		execute(inputF,outputF,v,l,s,r, salvarRetangulos, b);
 	
 		vector<IplImage*> *images = new vector<IplImage*>[2];
 		images->push_back(cvLoadImage(inputF));
