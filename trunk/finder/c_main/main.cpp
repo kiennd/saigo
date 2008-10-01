@@ -12,6 +12,42 @@
 
 using namespace std;
 
+
+void findSpaces (IplImage* input) {
+
+	int meioAltura = input->height / 2;
+  int x;
+  bool ehEspaco;
+  int inicio = 0 , fim =0; 
+  CvScalar pixel, pixel2;
+  for (x=0;x<input->width;x++) {
+    ehEspaco = false;
+    pixel = cvGet2D(input,meioAltura,x);
+    if (pixel.val[0] == 0) {
+      int y;
+      ehEspaco = true;
+      for (y=0;y<input->height;y++) {
+        pixel = cvGet2D(input,y,x);
+        if (pixel.val[0] != 0)
+          ehEspaco = false;      
+      }
+      if (ehEspaco) {
+      	if ( inicio == 0 )
+      		inicio = x;
+      	else
+      		fim = x;
+      	
+      } else {
+      	if ( inicio != 0 ) {
+	      	cout << "pixel de espaço: " << inicio << "," << fim << "\n";
+  	    	inicio = fim = 0;      
+  	    }
+      }  
+    }
+  }
+
+}
+
 void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, CvScalar mediaCorInteresse, int b) {
 	IplImage* imgTeste;
 	CvRect retInteresse;
@@ -62,6 +98,7 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 	      }
 
 			sprintf(caminhoArquivo,"%s/region%d.bmp",diretorio,i);
+            findSpaces(imgTeste);
             cvSaveImage(caminhoArquivo,imgTeste);
             i++;
             cvResetImageROI(input);
