@@ -12,6 +12,7 @@
 
 using namespace std;
 
+// imgAux
 IplImage* getRectImage (IplImage *input,Rect& r,int b) {
 	IplImage *region;
 
@@ -51,6 +52,7 @@ IplImage* binarize (IplImage *input,int limiarBinarizacao) {
 	return input;
 }
 
+// space
 bool isSpaceColumn (IplImage *input,int col) {
 	bool ehEspaco = true;
 	CvScalar pixel;
@@ -63,34 +65,121 @@ bool isSpaceColumn (IplImage *input,int col) {
 	return ehEspaco;
 }
 
-void findSpaces (IplImage* input) {
+double media (vector<Range> *espacos) {
+	
+	int i;
+	double media = 0;
+	Range r;
+	for (i = 0; i < espacos->size() ; i++ ) {
+		r = espacos->at(i);
+		media =  (r.right-r.left) * (1.0/(i+1)) + media * (((double)i)/(i+1));
+	}
+	return media;
+}
+
+vector<Range>* getEspacoReal (vector<Range>* todosEspacos, double media) {
+
+	int i;
+	Range r;
+	vector<Range> *espacos = new vector<Range>();
+	for (i=0; i< todosEspacos->size() ; i++ ){
+		r = todosEspacos->at(i);
+		if ( (r.right-r.left) > media )
+			espacos->push_back(r);
+	}
+
+	return espacos;
+}
+
+vector<Rect> *getWords (IplImage *input,vector<Range>*espacos) {
+
+	int i;
+	Range r;
+	Rect rect;
+	vector<Rect>* words = new vector<Rect>();
+
+	int left=0;
+	for (i=0; i< espacos->size() ; i++ ){
+		r = espacos->at(i);
+		rect.top = 0;
+		rect.bottom = input->height;
+		rect.left = left;
+		rect.right = r.left;
+		words->push_back(rect);
+
+		left = r.right;
+	}
+	rect.top = 0;
+	rect.bottom = input->height;
+	rect.left = left;
+	rect.right = input->width;
+	words->push_back(rect);
+
+	return words;
+}
+
+
+vector<Range>* findSpaces (IplImage* input) {
 
 	int meioAltura = input->height / 2;
 	int x;
-	int inicio = 0 , fim =0; 
 	CvScalar pixel;
+	vector<Range> *espacos = new vector<Range>();
+	Range r;
+	r.left = r.right = 0;
 
 	for (x=0;x<input->width;x++) {
 	    pixel = cvGet2D(input,meioAltura,x);
 		if (pixel.val[0] == 0) {
 			if ( isSpaceColumn (input,x) )
-				if ( inicio == 0 )
-      				inicio = x;
+				if ( r.left == 0 )
+      				r.left = x;
 			    else
-      				fim = x;
+      				r.right = x;
       	
 		} else {
-			if ( fim == 0 )
-				fim = inicio;
+			if ( r.right == 0 )
+				r.right = r.left;
 
-			if ( inicio != 0 ) {
-				cout << "pixel de espaço: " << inicio << "," << fim << "\n";
-	  	    	inicio = fim = 0;      
+			if ( r.left != 0 ) {
+				//cout << "pixel de espaço: " << r.left << "," << r.right << "\n";
+				espacos->push_back(r);
+	  	    	r.left = r.right = 0;      
   		    }
    		}	   
    
   	}
+	return espacos;
 }
+
+void salvaPalavras (IplImage* input, vector<Rect> *rects, char* outputFileName, int b) {
+	IplImage* imgTeste;
+	char caminhoArquivo[255];
+	char diretorio[255];
+	char comando[255];
+	int i = 1;
+
+	sprintf(diretorio,"%s_dir",outputFileName);
+	sprintf(comando,"bash -c '[[ -d %s ]] || mkdir %s'",diretorio,diretorio);	
+	system(comando);
+
+	int j;
+	Rect r;
+	for ( j = 0 ; j < rects->size() ; j++ ) {
+	  r = rects->at(j);  
+	
+	  if ((r.right - r.left > 0) && (r.bottom-r.top > 0)) {
+	              
+		imgTeste = getRectImage (input,r,b);    
+		sprintf(caminhoArquivo,"%s/word%d.bmp",diretorio,i);
+        cvSaveImage(caminhoArquivo,imgTeste);
+        i++;
+      }
+	}
+}
+
+
+
 
 void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, CvScalar mediaCorInteresse, int b) {
 	IplImage* imgTeste;
@@ -117,7 +206,8 @@ void salvaRegioes (IplImage* input, vector<Rect> *rects, char* outputFileName, C
 		imgTeste = binarize(imgTeste,limiarBinarizacao);
             
 		sprintf(caminhoArquivo,"%s/region%d.bmp",diretorio,i);
-        findSpaces(imgTeste);
+		vector<Range> *espacos = findSpaces(imgTeste);
+		salvaPalavras(imgTeste, getWords(imgTeste,getEspacoReal(espacos,media(espacos))),caminhoArquivo,0);
         cvSaveImage(caminhoArquivo,imgTeste);
         i++;
       }
