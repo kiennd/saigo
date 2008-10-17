@@ -16,7 +16,7 @@ using namespace std;
 IplImage* getRectImage (IplImage *input,Rect& r,int b) {
 	IplImage *region;
 
-	CvRect retInteresse = cvRect(r.left-b,r.top-b,(r.right-r.left)+b,(r.bottom-r.top)+b);
+	CvRect retInteresse = cvRect(r.left,r.top-b,(r.right-r.left)+b,(r.bottom-r.top)+b);
 	region = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
 	cvSetImageROI( input, retInteresse );
     cvCopy( input, region, NULL );
