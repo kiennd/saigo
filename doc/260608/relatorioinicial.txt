@@ -1,0 +1,170 @@
+- Introdução
+	A indexação de imagens por conteúdo, refere-se à colocação de títulos em imagens, baseando-se no seu conteúdo. Esse conteúdo pode ser dividido em duas categorias distintas: o conteúdo perceptível e o conteúdo semântico.
+	O conteúdo perceptível é aquele definido pelos atributos da imagem, como cores, intensidade, forma, texturas, etc. Já o conteúdo semântico é definido pelos objetos, eventos e suas relações nas imagens/vídeos. 
+	O conteúdo semântico pode ser definido por texto, faces, veículos ou ações humanas, sendo o texto de grande importância. Isto porque, o texto presente na imagem é muito útil para descrever o seu conteúdo e mais que isso, pode ser facilmente caracterizado e extraído da imagem. Com base no texto ainda, podemos montar interessantes aplicações como buscas de imagens baseadas em palavras chaves, log automático de vídeos e indexação das imagens baseadas no texto.
+	A nossa aplicação se enquadra neste escopo, de classificação das imagens pelo seu conteúdo semântico. No caso do nosso algoritmo, podemos dizer que estamos buscando uma "classe" do conteúdo semântico das imagens, já que procuramos texto para então classificar as imagens por esse conteúdo (texto). 
+
+ - O texto nas imagens
+ Uma grande variadade de abordagens podem ser usadas para extração de texto das imagens. Várias foram propostas como por exemplo, a segmentação de páginas, localização de blocos de endereço em fotos, localização de placas de carros, e a indexação propriamente dita de imagens e vídeos. 
+ 	Percebe-se que a grande maioria dos trabalhos nesta área, sempre foca-se em apenas um tipo específico de texto a ser reconhecido. Isto porque, é sabido que apesar de muitos estudos na área, a grande variedade de possibilidades de tamanho de fontes, estilos, cores, orientação, além das variações de fundos complexos ou com pouco contraste, impossibilitam a construção de um algoritmo eficiente para extração de textos de diferentes formatos das imagens.
+ 
+- Análise de layout
+
+	Uma abordagem eficiente para o reconhecimento de texto em imagens de documentos, revistas e periódicos, é a análise do layout do documento, e a segmentação baseada no forte contraste que normalmente está presente, já que documentos dificilmente terão fundos complexos a serem tratados. Já para imagens coloridas, a abordagem não se torna muito eficiente;
+	
+- Métodos baseados na região
+
+	Os métodos baseados em região, usam as propriedades das cores ou escala em preto e branco das regiões de texto, e a relação destas propriedades com as propriedades de cor do fundo da imagem. Existem duas abordagens possíveis sob este tipo de método, a baseada em componentes conexas e as baseadas nos limiares do texto.
+	Normalmente estas abordagens trabalham a partir de estruturas pequenas, como as componentes conexas ou limiares encontrados, para então, uní-las e dessa combinação montar os retângulos que delimitam as regiões de imagem.
+	
+  - Métodos baseados em Componentes Conexas
+  Estes métodos trabalham, como já citado anteriormente, agrupando pequenas componentes conexas em refinamentos sucessivos, até identificar todas as regiões presentes na imagem. São usados algoritmos de geometria computacional para uní-las de maneira correta e se possível já filtrar aquelas que não representam regiões de texto.
+  - Métodos baseados no contorno/limiar do texto
+  Entre as várias características das regiões de texto dentro de uma imagem, os métodos baseados no contorno, utilizam-se do grande contraste normalmente presente entre a cor do texto e a cor do fundo da imagem. Os contornos da região de texto são identificados e então, dadas essas estruturas que são por exemplo intervalos de pixels, estes intervalos são então unidos e formam então um retângulo (bounded box) que delimita a região de texto. Após isso, vários métodos podem ser usados para que sejam filtradas as regiões que não são de texto propriamente (falsos alarmes).
+  
+- Métodos baseados em análise de textura
+	Estes métodos, aproveitam-se do fato que o texto presente nas imagens, tem propriedades de textura que são suficientes para distinguí-lo do fundo. Podem ser aplicados filtros, Wavelet, transformada de Fourier, variação espacial para que sejam detectadas as propriedades texturais de uma região de texto na imagem.
+	
+- Outras abordagens
+
+	Existem ainda métodos mais simples para o reconhecimento de texto, como por exemplo, a binarização da imagem utilizando restrições pré-definidas. Estes são métodos de implementação muito simples, que normalmente são úteis para o reconhecimento de documentos e outras imagens simples que contém texto, normalmente com fundo branco e texto em preto, tornando fácil o seu reconhecimento. A grande vantagem desse tipo de abordagem é a simplicidade de implementação e o alto desempenho, no que se diz respeito ao custo de tempo que leva a análise.
+	
+- Classificação das regiões de texto
+	Alguns pesquisadores gostam de classificar as regiões de texto presentes dentro de uma image, em dois conjuntos distintos: o conjunto de "textos gráficos" (graphics text) para o texto presente originalmente na figura, e o conjunto de "textos artificiais" (artificial/superimposed text) para os textos de legendas. 
+	Dadas as características, é sabido que o texto gráfico, presente originalmente na imagem, é mais complicado de ser detectado. Isso porque este texto normalmente é influenciado por uma série de fatores, como por exemplo, este texto pode ser distorcido em função da orientação em que foi captada a imagem, e além do mais, pode sofrer muitas variações em função da iluminação, foco e movimentação da imagem.  
+	
+	
+ 
+ 
+- Implementação do algoritmo
+
+
+
+	Para o reconhecimento de regiões da imagem que são consideradas texto, assumimos que estas regiões contém muita variação de cor nos pixels. Isso porque nas regiões de transição entre o fundo da imagem e a fonte do texto, há uma diferença de cores bastante acentuada dada a borda das letras. 
+	A avaliação de similaridade/transição de cores dos pixels, é feita a partir de uma constante fornecida para o algoritmo, que é o quanto a cor de um pixel pode variar de outro, sendo que os dois ainda são considerados similares.	
+	Baseando-se nessa idéia, o algoritmo procura o primeiro pixel da linha, que é destoante dos pixels lidos até então (possivelmente, de fundo). 
+	De posse da posição desse pixel, é feita uma leitura dos pixels adiante, buscando a similaridade deles com a do pixel anteriormente encontrado. Essa leitura, é feita dentro de um limite máximo de pixels à frente, estipulado manualmente. Se a região adiante atingir o limite máximo de homogeneidade, ela será descartada, pois não há variação significativa. 
+	Se a região à frente não atingir o limite máximo, e continuar variando com regiões de cores homogêneas ainda menores que o limite, a leitura prosseguirá até que haja uma região que passe do limite, ou que seja atingido o limite de largura da imagem.
+	Para delimitar o intervalo com variação significativa, é guardada a última posição com pixels discrepantes, na leitura de uma região que ainda não atingiu o limite de homogeneidade.	Depois de feita a leitura de cada linha da imagem, são guardados os intervalos significativos de pixels, em estruturas próprias que contém as coordenadas x e y (início e fim).
+	
+	Dados os intervalos encontrados pelo algoritmo, é aplicado um algoritmo de geometria computacional que é encarregado de fazer a união desses intervalos, a fim de formar uma região retangular que delimita a região que é considerada como região de texto da imagem.
+	Essa união é feita com uma estrutura temporária, que guarda os retângulos até então válidos. De começo, esses retângulos nada mais são do que as regiões da primeira linha onde foi encontrado algum intervalo válido.
+	Passada a primeira linha, serão avaliados os intervalos da linha seguinte para descobrirmos se há concomitância entre eles. Se houver, serão assumidas as coordenadas horizontais do intervalo maior e as coordenadas verticais do rodapé, serão as do último intervalo lido (pois a leitura é feita de cima para baixo na imagem). Sendo assim, as coordenadas verticais do cabeçalho do retângulo serão sempre as do primeiro intervalo lido que possui concomitância com outros.
+	Assim por diante, serão analisadas as próximas linhas, sempre comparando-as com os retângulos existentes até então na estrutura temporária.
+	A distância vertical máxima, entre as coordenadas do rodapé dos retângulos até então construídos, e o intervalo que está sendo lido no momento, para que este seja considerado concomitante (além da avaliação horizontal) é definida também por uma constante informada ao algoritmo.
+	Como conseqüência do teste de concomitância, o algoritmo também une retângulos que estão em uma mesma linha horizontal, mas com distância muito grande entre si (maior que a constante de homogeneidade definida no algoritmo), se houver um intervalo logo abaixo dessa linha que é concomitante com os dois (ou mais) intervalos logo acima.
+	Isso é bastante interessante para o caso de, na varredura das primeiras linhas, só sejam encontradas pequenas regiões com variações significativas, como por exemplo, na frase "teste inteligente". Nas primeiras linhas de varredura, só serão encontrados os pingos da letra "i" e a parte de cima das letras "t" e "l", que mesmo estando com uma grande distância entre si, não deixam de fazer parte da mesma região. 
+	Quando a união dos intervalos prosseguir para as linhas abaixo, será encontrado algum intervalo concomitante com todas as pequenas regiões definidas pelas linhas acima, que corresponde a parte central das letras, onde se encontra um intervalo de maior variancia.
+	
+	Dessa maneira, ao término do algoritmo, estaremos de posse das regiões onde possivelmente há texto, delimitadas pelos retângulos construídos anteriormente.
+	
+	//COLOCAR IMAGEM CAGADA
+	
+- Refinamento do algoritmo de localização de intervalos
+
+	Baseando-se no feedback obtido com os testes realizados com a nossa base de imagens de testes, na implementação anterior do algoritmo, buscou-se refinar a busca de intervalos válidos, afim de implementar uma heurística que assume que numa região de texto a cor (do texto) é única.
+	Partindo-se desse princípio, o algoritmo de localização de intervalos, foi modificado para que após lida uma região homogênea na cor do texto (menor que a constante de homogeneidade, portanto válida), a próxima região só seja considerada como parte do intervalo, se os pixels que tem cores discrepantes do fundo, também tem cor similar à cor dos pixels encontrados no primeiro intervalo válido da linha. 
+	Dessa maneira, não serão mais consideradas regiões da imagem com muita variação, mas onde a variação não faz sentido. Por exemplo, numa fotografia de uma nuvem, haverá muita variação próximo as bordas dessa nuvem, que poderia anteriormente ser considerada como texto (pois provavelmente não haverá região homogênea maior que o limite), mas que não faz sentido algum dentro da nossa busca.
+	Para refinar o algoritmo, precisamos apenas de mais uma variável para guardar a cor do primeiro intervalo válido e mais uma variável de controle que diz se o próximo intervalo interessa ou não. Dada a varredura do intervalo, após a primeira faixa de pixels homogêneos na cor do texto, teremos um próximo pixel de cor discrepante que assumimos pertencer ao fundo da imagem. Nesse ponto, nossa variável de controle diz que o intervalo à seguir não é válido, pois última cor lida é discrepante. 
+	Continuando a leitura dos pixels adiante e considerando que eles são homogêneos, porém não da cor que interessa, se for encontrada um pixel de cor diferente após esse intervalo homogêneo, este último intervalo lido não será considerado válido, pois marcamos na variável de controle que o próximo intervalo lido não seria válido. Suponha que a cor do pixel discrepante da região homogênea não válida, é igual a cor dos pixels encontrados no intervalo válido anterior. Se isto acontecer, a variável de controle será setada para considerar o próximo intervalo como válido. 
+	Ou seja, no próximo intervalo de cor homogênea lido, onde esta cor é a cor que interessa, quando houver um pixel de cor discrepante que determina o fim desse intervalo, ele será cnosiderado como válido e a variável setada para que o próximo intervalo não seja válido (pois agora a cor discrepante não é similar a cor que nos interessa). 
+	Se após a leitura do primeiro intervalo homogêneo não válido (após o primeiro válido), for encontrado um pixel de cor discrepante da cor desse intervalo, mas que também não é igual a cor do intervalo inicial, a leitura prosseguirá, mas com a variável de controle marcada de maneira que o próximo intervalo de cor homogênea não será considerado como válido. 
+	Desse modo, a leitura prossegue até o fim da imagem, ou até que seja atingida a constante de homogeneidade como acontecia antes, porém apenas considerando os intervalos que tem cor parecida ao primeiro encontrado. 
+	Este refinamento do algoritmo, foi muito importante para conseguir discernir regiões que contém pequenas imagens aninhadas a posição vertical do texto, que acabavam sendo consideradas como partes do texto também.
+	Não só as imagens aninhadas à texto, mas também as regiões que contém muita variação com cores não parecidas passaram a ser descartadas após essas modificações, como exemplo, as bordas de nuvens já citadas anteriormente, ícones de uma área de trabalho, ou qualquer tipo de objeto de cor não homogênea e discrepante ao fundo que poderia errôneamente ser considerado como região de texto.
+	
+	 - Problemas encontrados nos resultados até então
+	 
+	 Após o refinamento, o algoritmo mostrou-se bastante eficiente para selecionar o texto das mais variadas imagens, até mesmo com fundo complexo. O problema é que dadas as variações de fonte presentes no texto, o algoritmo fica dependente de constantes que delimitam as regiões a serem buscadas.
+	 São essas as constantes de similaridade, de homogeneidade, de distância vertical máxima e por último, a de tamanho mínimo de regiões válidas. 
+	 A primeira constante, não tão problemática até esse ponto, determina a diferença máxima aceitável entre dois pixels para que estes sejam considerados de cor semelhante. Ou seja, é o valor que o algoritmo utiliza, para diferenciar o possível texto do fundo da imagem. O problema é que dadas as diferentes imagens que o algoritmo pode analisar, não é interessante que a comparação seja baseada em um valor fixo, visto que as cores de fundo e texto podem variar, de maneira que alguma região de texto passe despercebida (seja considerada como uma região que faz parte do fundo).
+	 A segunda constante citada (homogeneidade) representa até o momento, o maior empecilho para o funcionamento genérico do algoritmo. Ou seja, até então, é necessário que essa constante seja configurada manualmente para cada imagem analisada, de maneira correta para que seja obtida a melhor seleção das regiões de texto. Isso porque, esse é o valor utilizado para determinar quais intervalos de pixels dentro da varredura de cada linha são variantes o suficiente para serem considerados como válidos (variancia é o parâmetro para a busca).
+	 Em outras palavras, essa constante está ligada diretamente ao tamanho da fonte contido na imagem analisada. Sendo assim, a dificuldade até então, é justamente determinar esse valor de maneira automática. Vale lembrar, que dado o funcionamento da busca (que procura regiões variantes em pixels, mas de cor homogênea), se a constate encontrada for compatível com a maior fonte do texto, as regiões com fontes pequenas ainda serão encontradas corretamente. A recíproca não é verdadeira, pois o algoritmo não encontra regiões com fontes grandes, se a constante estiver com um valor muito pequeno.
+	 
+	 - Cálculo dinâmico do limite de variância
+	 Para tentar solucionar este problema, foi investido algum tempo nas últimas reuniões da equipe, fazendo alguns cálculos de média de tamanho dos intervalos obtidos e também da mediana do tamanho dos intervalos obtidos.
+	 Ou seja, em um primeiro momento, a idéia foi começar com um valor fixo na constante, razoavelmente grande, que seria então estabilizado de acordo com as características da imagem, fazendo-se os cálculos acima citados, a cada novo intervalo válido encontrado. 
+	 No cálculo da média, o cálculo sempre tendeu a 1 (1 pixel de tamanho do intervalo), pois era muito influenciado por pequenas regiões encontradas muitas vezes na imagem. A mediana, da mesma maneira não ficou precisa, pois apesar de ter um valor maior, ainda não era suficiente para cobrir todos os casos.
+	 Sendo assim, neste momento, compreendemos que o foco principal é encontrar uma maneira para determinar o valor dessa constante, porém precisamos de mais base teórica ou idéias mais fundamentadas a esse respeito. Pois finalizada essa parte, o algoritmo se tornará muito mais poderoso e eficiente.
+	 Sobre a constante de distância vertical máxima (utilizada na união vertical de intervalos em linhas diferentes), entendemos que existe uma relação muito forte com a constante de homogeneidade, pois o tamanho vertical de fontes, normalmente possui alguma relação de proporcionalidade com a largura.
+	 Já a constante de tamanho mínimo de regiões válidas (no momento, definida diretamente no código), possivelmente também possui alguma relação com a de homogeneidade, no sentido de que devemos desprezar apenas as variações que são pequenas demais para serem algum tipo de fonte, mas não as fontes pequenas em relação a maior presente na imagem. Ou seja, temos idéia de que essa análise deve levar em conta a localidade desse intervalo e os demais que foram encontrados na sua proximidades.
+	 
+	//contrastar a imagem obtida do Windows  com suas constantes e a jinnai
+	
+- Solução para o "problema" das constantes: delimitação do escopo de trabalho
+
+	Após algumas reuniões com o orientador, foi definido pela equipe que o mais correto seria delimitar o escopo de trabalho do algoritmo. Com alguma pesquisa e leitura acerca do assunto (outros artigos e trabalhos já feitos) ficou claro que o problema da detecção automática dos mais variados tipos de texto, formas e tamanhos de fonte, é muito complexo de ser resolvido. Normalmente os outros trabalhos encontrados focam-se a solucionar apenas um tipo de problema, ou seja, um tipo de imagem a ser tratada, com suas determinadas características, modelo e tamanho de fonte.
+	Sendo assim, decidimos delimitar o escopo de trabalho do nosso algoritmo, para a detecção de textos artificiais, sobrepostos, em imagens captadas de sequencias de tv, como filmes, telejornais e outros programas com letras sobrepostas. Nada impede que o algoritmo em algum momento capte também texto natural da imagem, mas vale lembrar que este não será o foco principal.
+	Delimitando o escopo de detecção, torna-se mais simples encontrar uma combinação das constantes de variância de intervalos e similaridade de pixels, de maneira a otimizar o resultado das regiões encontradas, deixando-as com maior precisão e menos falsos alarmes.
+
+
+	- Descrição formal do algoritmo atual
+	
+	  //incluir imagem com o diagrama em blocos do algoritmo
+	  
+encontre_intervalos;
+monte retangulos a partir dos intervalos;
+
+funcao encontre_intervalos () {
+para cada linha de imagem_altura {
+  intervalo.esquerda é 1;
+  enquanto (intervalo.esquerda é menor que imagem.largura) {
+    intervalo.esquerda = encontre_primeiro_pixel_discrepante_linha_atual();
+    se intervalo.esquerda < imagem.largura {
+      intervalo.direita = encontre_ultimo_pixel_intervalo(primeiro_pixel_linha_atual);
+      se (intervalo.direita - intervalo.esquerda > 10)
+        insere intervalo em lista_intervalos
+      intervalo.esquerda é intervalo.direita + 2;
+    }
+  }
+}
+}
+
+funcao encontre_ultimo_pixel_intervalo (pixel_atual) {
+  repita {
+    se são similares o pixel_atual e o pixel anterior no intervalo
+      some 1 em pixels_iguais
+    senão zera número de pixels_iguais
+    se o intervalo interessa
+      o ultimo_pixel é o pixel anterior ao atual
+    se é similar o primeiro_pixel_intervalo e o pixel atual, próximo intervalo não interessa
+    senão o próximo intervalo interessa
+    }
+    pixel_atual = próximo_pixel;
+  } enquanto(pixel_atual é menor que a da largura_imagem e o número de pixels_iguais é menor que a constante_variancia);
+  retorne ultimo_pixel;
+}
+
+
+	
+- Regiões importantes sendo desprezadas
+
+	Depois das últimas melhorias, obtivemos bons resultados filtrando grande parte dos falsos alarmes nas imagens reconhecidas e uma significativa melhora na capacidade de discernimento do que é texto ou não, por parte do algoritmo. O grande problema dessa filtragem, é que dadas as características morfológicas das regiões de texto, as quais o nosso algoritmo baseia sua busca, isto acarretou que algumas regiões importantes da imagem fossem descartadas.
+	Ou seja, apesar de melhorarmos no sentido de que diminuiu o número de regiões de falsos alarmes encontradas, infelizmente este passou também a descartar regiões importantes, que continham texto e informações relevantes, que deveriam ser encontradas.
+	Na verdade, foi observado pela equipe que normalmente as regiões de falsos alarmes/lixo encontradas pelo algoritmo, consistiam de pequenas regiões com muitas variações de cores. O problema das variações de cores foi resolvido pela abordagem que procura intervalos com variancia apenas de cor semelhante, explicada acima. 
+	Porém, ainda assim pequenas regiões de lixo continuavam a ser encontradas. Dessa maneira, optamos por filtrar regiões menores que uma constante X de pixels, sempre descartando-as. Nesse ponto que regiões com conteúdo importante passaram a ser desprezadas, pois regiões com letras pequenas e/ou com poucas letras isoladas no meio da imagem, passaram a ser desprezadas ou detectadas de maneira falha, como no exemplo abaixo.
+	
+	(rodar algoritmo na imagem com_fundo_complexo e colocar constante no meio do pŕograma em 25)
+	
+	Até o momento, estávamos descartando todas as regiões encontradas com menos de 25 pixels. Ou seja, regiões com apenas algumas letras disjuntas ou até pequenas palavras, passaram a ser completamente descartadas pelo algoritmo. Diminuindo o valor dessa constante para 10 pixels, obtivemos resultados muito melhores, como pode ser visto no exemplo. Na verdade, o valor dessa constante será fixado em algo entre 5-10 pixels, pois assumiremos que qualquer tipo de texto/informação textual que seja pertinente para o ser humano na imagem, com certeza terá mais de 5 pixels de largura.
+	Infelizmente, desse modo obviamente o número de falsos alarmes encontrado pelo algoritmo irá aumentar, porém ainda isto ainda é vantajoso, pois é preferível pegarmos todas as regiões importantes com um pouco de falsos alarmes, do que deixar de ter falsos alarmes e acabar por desprezar informações interessantes. Na verdade, os falsos alarmes não são um problema tão sério, considerando que ainda teremos a classificação feita pelo OCR na próxima etapa do algoritmo.
+	
+	(rodar algoritmo com a constante menor na mesma imagem citada acima) 
+
+- Aplicando o algoritmo fazendo varredura de maneira vertical
+
+  Dadas algumas sugestões do orientador e idéias da equipe, decidimos que fazer uma outra varredura na imagem com o mesmo algoritmo após a inicial, só que numa orientação vertical da imagem poderia ser vantajoso no sentido de cobrirmos todos os detalhes das letras no texto. 
+  Isto é, existem alguns pontos que podem falhar no algoritmo, tais como os pingos do i's e quaisquer outras letras que são mais altas que o resto do texto, que provavelmente terão sua parte superior descartada pela constante citada logo acima, de tamanho mínimo dos intervalos que interessam. 
+  Porém, após a diminuição do valor da constante, foi atestado pela equipe que a detecção na maioria dos casos não descarta os pequenos pedaços mais altos, de algumas letras. São raros os casos onde isto aconteceu, não justificando o uso de outra varredura completa, na orientação vertical.
+  
+  Outra justificativa para se usar uma segunda varredura vertical, é que de posse das regiões encontradas pelas duas varreduras distintas, poderíamos apenas considerar as regiões determinadas pela intersecção de  regiões encontradas na varredura horizontal e regiões encontradas na varredura vertical. 
+  Isto é, partimos do princípio de que se há uma variação válida de texto na orientação horizontal, que indica que este intervalo é uma possível região de texto, também deve haver uma variação na orientação vertical do texto. Ou seja, só interessariam para nós as regiões que possuem variação válida nas duas orientações.
+  Da mesma maneira, consideramos que possivelmente várias regiões de falsos alarmes encontradas pelo algoritmo passariam a ser descartadas, pois apesar de terem variação na orientação horizontal, provavelmente não teriam variação válida na orientação vertical, de maneira a haver intersecção com a região encontrada na orientação horizontal, já que isto só ocorrerá garantidamente em regiões de texto. 
+  Colocando em prática a idéia e, realizando alguns testes com várias imagens, na verdade constatamos que a grande maioria das regiões de falsos alarmes também possuíam variação suficiente para determinar regiões válidas na orientação vertical.
+  Ou seja, dessa maneira, já foi invalidada a principal idéia e motivo para se usar a varredura vertical, que seria uma melhor filtragem das regiões de falsos alarmes. Pior que isso, notou-se também que algumas regiões relevantes que continham texto, por vezes não apresentavam variação suficiente para serem consideradas válidas pelo algoritmo na região vertical, já que frases "soltas" de texto por exemplo, não determinam grande variação vertical, como ocorreria em um parágrafo completo. Ou seja, denovo nos deparamos com o problema de descartar regiões importantes, só que dessa vez, sem grandes vantagens na remoção dos falsos alarmes. 
+
+	Concluindo a conclusão
+	
+	De maneira simples, já conseguimos encontrar o nosso objeto de análise (regiões textuais). Porém, como imagens em vídeo são geralmente muito complexas e contém textos das mais variadas fontes e tamanhos, seria interessante que o algoritmo fosse um pouco mais genérico e robusto para se adequar a maioria dos casos. 
+	Sendo assim, esperamos investir mais uma quantia de tempo na resolução desse problema no reconhecimento de imagens, para então seguirmos adiante na segmentação de vídeo propriamente dita e estruturas de armazenamento das informações coletadas.
+	
