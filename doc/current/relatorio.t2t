@@ -18,6 +18,7 @@ Laerte Alves de Almeida Junior GRR20042353 @nl Rafael Charan GRR20053297
 %!postproc(tex): 'amsfonts,graphicx' 'amsfonts,graphicx,fancyvrb'
 %!postproc(tex): '@BIB ([a-zA-Z0-9]+)' '\\bibliographystyle{plain}\n\\bibliography{\1}'
 %!postproc(tex): '@([a-zA-Z0-9]+)' '\\cite{\1}'
+%!postproc(tex): 'GRAUS ([0-9]+) ' '$\1\,^{\\circ}{\\rm C}$'
 %!encoding: utf-8
 
 
@@ -286,10 +287,95 @@ funcao encontre_ultimo_pixel_intervalo (pixel_atual) {
 }
 ```
 
+@np
+
+=Aprimoramentos da Solução=
+
+
+==Nova constate de MOLDURA==
+
+Contante utilizada para aumentar a região do bounded box com um limiar padrão. Esta constante foi utilizada para que o contorno ao redor de todo texto seja obtido com maior precisão, sem precisar de heurísticas muito complicadas que tratam da remoção do lixo sem comprometer a captação das letras.
+
+
+
+==Utilização da biblioteca gráfica OpenCV.==
+
+% (ARRUMAR: citar parte onde falamos da tentativa de busca na orientação vertical) 
+
+Em meio as novas implementações sugeridas anteriormente onde iriamos utilizar uma nova busca em orientação vertical visando cruzar informações com a busca horizontal, a fins de diminuir os falsos alarmes e lixos encontrados, nos deparamos com um sério problema vindo da biblioteca de manipulação de imagens. Toda imagem que era rotacionada a GRAUS 90 pelo programa para ser percorrida na orientação vertical (fizemos isso com o propósito de aproveitar o mesmo código da primeira varredura horizontal) acabava por aparecer com uma tarja preta em alguma das colunas de pixels.
+
+Como esta biblioteca foi implementada apenas para fins didáticos da matéria optativa de Processamento de Imagens pelo Laerte, resolvemos optar por uma biblioteca mais robusta e de propósito mais sério que pudesse garantir uma melhor manipulação dos objetos de imagens no trabalho.
+
+Sendo assim decidimos utilizar a biblioteca livre //OpenCV//, pois ela tem capacidade para abrir qualquer formato de arquivo de imagem e transformar num único tipo de objeto que é o IplImage, sendo que antes nosso programa apenas poderia abrir imagens do tipo ppm. Além disso, esta estrutura IplImage fornece uma implementação fornece uma estrutura muito otimizada para a armazenagem da imagem em memória. Enquanto a biblioteca inicial implementava a imagem como uma matriz de ponteiros, onde cada pixel apontava para regiões não contíguas de memória. Essas regiões por sua vez, eram formadas por mais um vetor de ponteiros onde cada um representava um dos canais de cor do pixel. Embora esta implementação funionasse de maneira satisfatória durante todo o desenvolvimento do primeiro trabalho, percebemos que além do problema citado acima, o seu desempenho era terrível devido a tantos ponteiros e alocações necessárias para o funcionamento.
+
+Por outro lado a biblioteca //OpenCV// com a estrutura //IplImage// oferece uma implementação super otimizada, baseada num vetor que armazena todos os pixels da imagem de maneira contígua e acessa cada pixel/componente a partir de um hash simples que determina qual a posição do pixel no vetor. Mais que isso, este hash é bom o suficiente para fazer com que as componentes de cor de cada pixel fiquem lado a lado com as de seus vizinhos na orientação linear do vetor, o que trouxe um expressivo ganho de desempenho na execução das nossas buscas por regiões de texto, já que obrigatoriamente sempre percorremos a imagem na orientação horizontal (cada linha) sequencialmente, linha a linha.
+
+Além disso a //OpenCV// trouxe várias facilidades pelo fato de já encapsular uma infinidade de métodos prontos relacionados à manipulação de imagens. Em especial, os que foram de nosso interesse e ajudaram muito na implementação dos algoritmos, foram os métodos para setar regiões de interesse na imagem principal (//SetImageROI//), já que os textos encontrados dentro da imagem principal nada mais são do que as nossas regiões de interesse dentro desta imagem. Outros métodos que utilizamos bastante foi o método de desenho de retângulos para geração da imagem de saída com os bounded boxes, //CvRetangle// que desenha automaticamente retângulos (antes precisávamos desenhar na mão, com for's encadeados desenhando as linhas de pixels). Também pudemos aproveitar a estrutura já pronta da biblioteca //cvRect// para armazenar os retângulos de texto encontrados no programa.
+
+==Segmentação de texto==
+
+Como um próximo passo no refinamento do nosso algoritmo, decidimos fechar ainda mais o escopo de trabalho para especificamente legendas de vídeos. Baseando-se nesse novo escopo, decidimos após algumas conversas com o orientador que o próximo passo no desenvolvimento será a segmentação das regiões de texto encontradas em regiões de palavras e, posteriormente a segmentação das palavars em caracteres separados, visando uma maior integração e melhoria de resultados na utilização do software de OCR em cima das regiões obtidas.
+
+===Primeiro tópico: Binarização===
+
+Para conseguir detectar de maneira convincente as regiões de palavras dentro da região de texto encontrada pelo programa, pensamos em várias idéias e abordagens diferentes, porém a //melhor// que obtivemos, foi a de binarizar a imagem obtida a fins de separarmos efetivamente o que é texto e o que é fundo dentro da região. Para tanto, esbarramos mais uma vez no problema de como binarizar esta imagem? Que valor utilizar como limiar de binarização? Que relação este valor teria com cada região de texto encontrada?
+
+Em um primeiro momento pensamos que este limiar de binarização poderia se tornar mais uma constante das tantas já presentes no nosso programa, que deveria ser configurada manualmente para a varredura das imagens. Contudo, notamos que este valor era muito difícil de ser definido de maneira genérica tal qual pudesse atender as necessidades dos mais variados tipos de vídeo. O problema é que cada vídeo possui uma característica diferente de texto, principalmente no que se diz respeito à cor da legenda. E justamente, a cor da legenda é fator chave na determinação de um limiar de binarização correto, que descarte todas as variações (ou grande parte delas) de cor do fundo da imagem e deixe bem claro e delineadas as letras do texto.
+
+Uma das opções seria restringir as cores possíveis de legendas que seriam detectáveis pelo nosso algoritmo. Porém, esta alternativa faria com que a nossa abordagem se torna-se muito limitada e pouco aproveitável na prática da fato, visto que não há um padrão de legendas estritamente definido nos variados tipos de vídeos encontrados na internet, muito menos no que se diz respeito à cor.
+
+Paralelamente ao grande problema de definir qual o limiar correto de binarização para ser utilizado, percebemos em alguns testes manuais em editores gráficos com as imagens das regiões de texto obtidas, que dados alguns limiares de valores ajustados arbitrariamente para a binarização, a separação do texto (face da imagem) e do fundo era perfeita. Conseguímos de maneira perfeita deixar todo o texto em cor branca e o fundo quase que completamente preto, com poucas interferências e regiões de lixo.
+
+Tendo testado grupos de imagens com binarizações baseadas em constantes arbitrárias e obtendo os resultados satisfatórios na separação do fundo do texto, percebemos que este realmente seria o caminho a ser seguido. A binarização realmente era o primeiro grande passo na segmentação das regios de texto obtidas.
+
+Voltando um pouco a idéia de como foi implementado o nosso algoritmo para encontrar regiões de texto, que foi explicado no primeiro trabalho, podemos lembrar que as regiões de pixels que são consideradas texto pelo nosso programa, não são regiões com variações aleatórias de cores. Fazendo uma breve explicação do algoritmo, podemos lembrar que ele consistia em pegar o primeiro pixel de cor discrepante (dada a constante de diferença máxima aceitável) e armazená-lo como um possível começo de região de texto. Dado esse pixel de cor discrepante, daqui pra frente sempre vamos procurar por um intervalio de variações que contenha pixels de cor parecida com a do primeiro pixel discrepante em meio a outros pixels com cor de fundo da imagem. Hora, se nosso algoritmo já baseia a sua busca em uma cor específica de interesse, por que não utilizá-la como um possível limiar de binarização ? Pois se temos em mãos intervalos que possuem uma primeira cor discrepante e que após esse primeiro momento, sempre estará se repetindo em meio a outras cores diferentes que são consideradas do fundo da imagem, não é difícil percebermos que esta cor é de fato a cor do texto que está inserido nesta região e foi encontrado pelo algoritmo.
+
+Sendo assim, a cada intervalo de apenas 1 pixel de altura encontrado pelo programa que é considerado como fazendo parte de uma região de texto, guardamos o valor da cor do seu primeiro pixel discrepante (cor de interesse) em uma variável e vamos incrementando um contador do total de intervalos obtidos. Ao término da busca de todos os intervalos, o algoritmo pega a soma de todas as cores de interesse e divide pelo número de intervalos obtidos, chegando assim em uma média da possível cor do texto contido nas regiões obtidas.
+
+De posse dessa média, o que antes parecia um problema muito complicado de ser resolvido, a obtenção do limiar de binarização, tornou-se muito simples. Em um primeiro momento ficou difícil até para a equipe acreditar solução, porém dado o funcionamento do primeiro algoritmo de busca de regiões de texto que já é baseado em buscar regiões de cores uniformes, fica fácil percebermos que é uma solução viável.
+
+Sendo assim, bastou pegarmos esta média calculada das possíveis cores dos textos encontrados e utilizá-la como o famigerado limiar de binarização. E o resultado foi ótimo, dentro do esperado. Para melhorar ainda mais os resultados obtidos, realizamos alguns testes com screenshots variadas de alguns vídeos encontrados na internet utilizando duas abordagens diferentes: em um primeiro momento, determinamos que o limiar de binarização seria obtido a partir da média das três componentes de cor (vermelho, verde e azul). Porém, apesar de obtermos bons resultados, ainda apareciam algumas falhas em imagens que tinham variações de cores mais claras no fundo das imagens de texto, principalmente quando a cor é parecida com a cor do texto.
+
+
+%colocar exemplos na primeira abordagem, provavelmente será necessário recodificar na maneira antiga, fazendo média.
+
+Em um segundo momento, decidimos que o limiar de binarização seria obtido pelo valor da maior das três componentes de cor da cor de interesse. E esta foi a abordagem que gerou melhores resultados, pois quanto maior o valor do limiar mais lixo é descartado do fundo da imagem e mais nítido e "separado" do fundo fica o texto. Isso porque a média das três componentes acabava por baixar muito o valor do limiar em alguns casos onde uma ou mais componentes da cor tinha valor muito discrepante/baixo, deixando a média próxima também de valores de cores que estão presentes no fundo da imagem e são diferentes da cor do texto.
+
+%colocar exemplo na segunda abordagem.
+
+===Abordagem para dividir palavras dentro das regiões de texto encontradas===
+
+Uma vez que a imagem foi binarizada e agora podemos definir com precisão quais são as regiões de fundo (cor preta) e quais são as regiões de texto (em branco) ficou mais simples dividirmos as regiões de texto encontradas em regiões de palavras separadas. O grande problema deste novo passo, é determinar os espaços pretos que realmente dividem duas letras.
+
+Isto porque, mesmo dentro de uma única letra, podemos ter espaços de fundo intermitentes com as cores de texto sem que esse espaço seja de fato um espaço que separa duas letras. Um exemplo é a letra "o", ou então "a", entre outras que possuem espaços com a cor do fundo dentro da própria região da letra.
+
+%inserir imagem exemplificando letra
+
+===Identificando espaços que estão entre letras===
+
+Para identificar os espaços que estão de fato entre as letras do texto, delimitando-as, precisávamos encontrar uma característica que fosse unicamente deste tipo de espaço e que pudesse garantir que ele não está no meio de algum caracter. Para tanto, após algum tempo tentando encontrar essa característica, observamos que apenas os espaços que nos interessam tem toda a sua extensão vertical na cor do fundo.
+
+Isto é, ao encontrar um pixel qualquer na cor preta dentro da imagem, se toda a extensão vertical da coluna a qual este pixel está inserido é formada por pixels de cor preta, é garantido que esta coluna pertence à um espaço entre duas letras. Sendo assim, basta encontrarmos todas as colunas de pixels que são pretas em toda extensão vertical dentro da região de texto encontrada e então, agrupar aquelas que são vizinhas e formar retângulos que determinam os espaços entre letras.
+
+Dessa maneira, conseguimos identificar com uma certa facilidade todas as regiões de espaços presentes em uma certa região de texto. Porém, só isto ainda não é suficiente para conseguirmos extrair as palavras. Isso porque, as regiões de espaço encontradas podem ser classificadas em dois grupos: os espaços entre letras e os espaço entre palavras. Ou seja, ainda precisamos definir alguma técnica para determinar quais são as regiões que estão entre palavras e não letras.
+
+===Identificando os espaços que estão entre palavras===
+
+Para identificar os espaços que estão entre as palavras dentro da região de texto, iremos trabalhar com uma abordagem onde é feita uma média do tamanho de todos os espaços que estão no meio de dois caracteres. Esta média é feita porque, a partir dela, podemos realizar algumas análises e determinar de maneira razoavelmente precisa quais são os intervalos entre palavras.
+
+Uma das análises definidas, é compararmos o tamanho de cada intervalo com a média obtida. Se este tamanho for igual a média ou ainda, maior que a média, podemos dizer que este é um espaço entre palavras. Isto porque, sabemos que a média é composta do somatório de todos os valores obtidos dividido pelo número de elementos. Sendo assim, é garantido que uma das maneiras de se chegar ao valor da média é que o valor de todos os espaços seja igual ao da média.
+
+Para que tenhamos valores de espaços diferentes daquele obtido na média, para cada espaço menor que esta é garantido que existe um espaço maior e vice-versa, para que a soma total continue sendo igual ao número de elementos multiplicado pelo valor da média. A partir disso, pudemos notar também que os espaços entre as letras sempre são menores que os espaços entre as palavras nas diversas amostras que observamos. Como também é garantido que sempre existirá mais espaços entre letras do que entre palavras, podemos notar que os espaços entre as letras terão mais influência sobre o valor da média do que os espaços entre palavras.
+
+Sendo assim, voltando a observação de que para cada espaço menor que a média deve haver pelo menos um maior que esta para garantir o valor da soma final, podemos deduzir que já que temos muitos valores pequenos de espaços entre letras influenciando a média, os valores de espaços que são iguais ou ainda maiores que a média, são justamente os espaços que estão entre as palavras e são maiores do que aqueles que estão entre letras.
+
+Em resumo temos que aqueles espaços cujo comprimento é maior do que o comprimento médio de espaços, são justamente os espaços que estão situados entre as letras.
+
+%inserir imagem explicativa
+
+
 =Conclusão=
 
-De maneira simples, já conseguimos encontrar o nosso objeto de análise (regiões textuais). Porém, como imagens em vídeo são geralmente muito complexas e contém textos das mais variadas fontes e tamanhos, seria interessante que o algoritmo fosse um pouco mais genérico e robusto para se adequar a maioria dos casos.
-
-Sendo assim, esperamos investir mais uma quantia de tempo na resolução desse problema no reconhecimento de imagens, para então seguirmos adiante na segmentação de vídeo propriamente dita e estruturas de armazenamento das informações coletadas.
+De uma maneira simples, conseguimos encontrar o nosso objeto de análise (regiões textuais), e tambem nos aproveitando das estruturas existentes para detectar as regiões de possivel texto, conseguimos uma boa aproximação para destacar o fundo da fonte, o que nos possibilitou uma solução simples para a detecção de palavras numa imagem textual. Apesar de ainda ser possivel nos aprofundamos mais neste topico, decidimos que a nossa pesquisa até esse ponto sobre detecção de texto em imagens já de alguma ajuda para este tópico na socidade, onde surgem a cada dia mais aplicações para esta solução.
 
 @BIB referencia

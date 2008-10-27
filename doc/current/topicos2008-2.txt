@@ -1,3 +1,0 @@
-- Conversão da biblioteca utilizada para manipulação de imagens para OpenCV, visando maior facilidade e desempenho.
-- Implementação de uma busca recursiva por arquivos que vai varrer um diretório procurando imagens.
-- Início do aprimoramento do algoritmo, visando agora a segmentação do texto encontrado nas regiões em palavras.
