@@ -16,7 +16,7 @@ using namespace std;
 IplImage* getRectImage (IplImage *input,Rect& r,int b) {
 	IplImage *region;
 
-	CvRect retInteresse = cvRect(r.left,r.top-b,(r.right-r.left)+b,(r.bottom-r.top)+b);
+	CvRect retInteresse = cvRect(r.left,r.top-b,(r.right-r.left)+2*b,(r.bottom-r.top)+2*b);
 	region = cvCreateImage(cvSize(retInteresse.width,retInteresse.height),input->depth,input->nChannels);
 	cvSetImageROI( input, retInteresse );
     cvCopy( input, region, NULL );
@@ -35,6 +35,9 @@ int getThreshold (CvScalar mediaCorInteresse) {
 	  limiarBinarizacao = (int) mediaCorInteresse.val[2];	
 
 	return limiarBinarizacao;
+	
+	//return (mediaCorInteresse.val[0] + mediaCorInteresse.val[1] + mediaCorInteresse.val[2])/3;
+	
 }
 
 IplImage* binarize (IplImage *input,int limiarBinarizacao) {

@@ -1,1 +1,2 @@
 ./finder -v 15 -l 6 -s 100 -r 8 -i achmed/imagem3.JPG
+./finder -v 15 -l 6 -s 120 -r 15 -b 5 -i achmed/imagem3.JPG -o teste.jpg -g
