@@ -1,0 +1,1 @@
+daigaku o detai
